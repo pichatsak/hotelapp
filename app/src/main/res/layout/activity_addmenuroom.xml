@@ -110,9 +110,10 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/framroom"
                 android:text="ห้องทั่วไป"
+                android:textColor="@color/grey"
                 android:gravity="center|start"
                 android:paddingLeft="15dp"
-                android:textSize="15sp" />
+                android:textSize="16sp" />
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"

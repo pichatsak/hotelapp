@@ -21,4 +21,7 @@
     <color name="textgrey">#9E9E9E</color>
     <color name="grey1">#EEEEEE</color>
     <color name="dialog">#6B000000</color>
+    <color name="dialog1">#616161</color>
+    <color name="red">#d21919</color>
+    <color name="line">#BDBDBD</color>
 </resources>

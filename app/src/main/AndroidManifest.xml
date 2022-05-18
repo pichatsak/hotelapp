@@ -10,29 +10,36 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Hotelapp">
         <activity
-            android:name=".pickmenuActivity"
-            android:exported="false" />
+            android:name=".SettingRoomActivity"
+            android:exported="true" >
+
+
+        </activity>
         <activity
             android:name=".addpageroomActivity"
             android:exported="false" />
         <activity
             android:name=".addmenuroomActivity"
-            android:exported="true" />
+            android:exported="true" >
+
+        </activity>
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.Hotelapp.NoActionBar">
 
-        </activity>
-        <activity
-            android:name=".loginActivity"
-            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+        </activity>
+        <activity
+            android:name=".loginActivity"
+            android:exported="true">
+
         </activity>
         <activity
             android:name=".forgetPasswordActivity"
