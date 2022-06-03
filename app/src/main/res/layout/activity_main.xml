@@ -15,6 +15,8 @@
         android:layout_height="match_parent" />
 
     <com.google.android.material.navigation.NavigationView
+        style="@style/drawStyleNew"
+        app:itemTextAppearance="@style/RobotoTextViewStyle"
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"

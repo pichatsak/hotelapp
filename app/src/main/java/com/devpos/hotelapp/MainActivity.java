@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout room1;
     private TextView cancle;
     private LinearLayout pickRoom;
+    private LinearLayout SeetingProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,19 +55,33 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
+                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_salereport)
                 .setOpenableLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-//       getSupportActionBar().hide();
+
+        getSupportActionBar().hide();
+
+
+        View headerViews = navigationView.getHeaderView(0);
+        SeetingProfile = headerViews.findViewById(R.id.SettingProfile);
+        SeetingProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent settingprofile = new Intent(MainActivity.this, SeetingProfileActivity.class);
+                startActivity(settingprofile);
+                drawer.close();
+            }
+        });
+
 
         addroom = findViewById(R.id.addroom);
         addroom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent gotoaddroom = new Intent(MainActivity.this,addmenuroomActivity.class);
+                Intent gotoaddroom = new Intent(MainActivity.this, addmenuroomActivity.class);
                 startActivity(gotoaddroom);
             }
         });
@@ -75,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         addmainmenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent gotoaddmainmenu = new Intent(MainActivity.this,addpageroomActivity.class);
+                Intent gotoaddmainmenu = new Intent(MainActivity.this, addpageroomActivity.class);
                 startActivity(gotoaddmainmenu);
             }
         });
@@ -91,11 +106,11 @@ public class MainActivity extends AppCompatActivity {
                 dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
                 dialog.show();
 
-                Display display =((WindowManager)getSystemService(MainActivity.this.WINDOW_SERVICE)).getDefaultDisplay();
+                Display display = ((WindowManager) getSystemService(MainActivity.this.WINDOW_SERVICE)).getDefaultDisplay();
                 int width = display.getWidth();
-                int height=display.getHeight();
-                Log.v("width", width+"");
-                dialog.getWindow().setLayout((6*width)/9,(4*height)/9);
+                int height = display.getHeight();
+                Log.v("width", width + "");
+                dialog.getWindow().setLayout((6 * width) / 9, (4 * height) / 9);
 
                 cancle = dialog.findViewById(R.id.cancle);
                 cancle.setOnClickListener(new View.OnClickListener() {
@@ -110,14 +125,13 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         dialog.dismiss();
-                        Intent gotosettingroom = new Intent(MainActivity.this,SettingRoomActivity.class);
+                        Intent gotosettingroom = new Intent(MainActivity.this, SettingRoomActivity.class);
                         startActivity(gotosettingroom);
                     }
                 });
             }
         });
-
-
+//
 
 
     }

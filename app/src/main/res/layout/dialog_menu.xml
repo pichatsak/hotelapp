@@ -12,7 +12,7 @@
         android:background="@drawable/background1"
         android:orientation="vertical"
         android:paddingLeft="30dp"
-        android:paddingRight="30dp"
+        android:paddingRight="20dp"
         android:paddingBottom="20dp"
         android:paddingTop="20dp">
 
@@ -27,7 +27,8 @@
             android:id="@+id/pickRoom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp">
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -42,7 +43,11 @@
                 android:layout_marginLeft="20dp"
                 android:text="จองห้อง"
                 android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:drawableEnd="@drawable/next1"
+
+              />
+
         </LinearLayout>
 
 
@@ -100,9 +105,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
-                android:text="ล็อคเอ้าท์"
+                android:text="เช็คเอ้าท์"
                 android:textColor="@color/red"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:drawableEnd="@drawable/next1"
+                android:drawableTint="@color/red"/>
         </LinearLayout>
 
 

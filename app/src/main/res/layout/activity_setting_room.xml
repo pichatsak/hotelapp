@@ -793,7 +793,7 @@
                 android:background="@drawable/login"
                 android:elevation="2dp"
                 android:gravity="center"
-                android:text="ยืนยันการจจอง"
+                android:text="ยืนยันการจอง"
                 android:textColor="@color/white"
                 android:textSize="16sp" />
 

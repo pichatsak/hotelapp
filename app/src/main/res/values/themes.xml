@@ -22,9 +22,14 @@
 
 
     </style>
+    <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/font</item>
+    </style>
 
+    <style name="drawStyleNew" parent="Widget.MaterialComponents.NavigationView">
 
-
+        <item name="itemIconTint">@color/item_color_menus</item>
+    </style>
 
     <style name="roundedImageViewRounded">
         <item name="cornerFamily">rounded</item>
@@ -34,6 +39,11 @@
     <style name="roundedImageViewRounded1">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">8%</item>
+    </style>
+
+    <style name="profile">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
     </style>
 
     <style name="Theme.Carview.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

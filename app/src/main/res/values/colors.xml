@@ -24,4 +24,15 @@
     <color name="dialog1">#616161</color>
     <color name="red">#d21919</color>
     <color name="line">#BDBDBD</color>
+    <color name="red1">#f4e0e0</color>
+
+
+    <color name="background">#1f2433</color>
+    <color name="background1">#302b4f</color>
+    <color name="background2">#3d3764</color>
+    <color name="text">#fff6ec</color>
+    <color name="textcolor">#674fb3</color>
+
+
 </resources>
+
