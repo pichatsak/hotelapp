@@ -98,8 +98,7 @@
                     android:layout_height="wrap_content"
                     android:drawableTint="@color/main"
                     android:inputType="text"
-
-
+                    android:id="@+id/nameCate"
                     />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -107,6 +106,9 @@
 
 
             <TextView
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:id="@+id/addCate"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="40dp"

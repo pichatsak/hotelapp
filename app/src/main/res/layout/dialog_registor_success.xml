@@ -83,7 +83,7 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="10dp"
                     android:gravity="center"
-                    android:text="คลิกปุ่ม ''เข้าสู่ระบบ''"
+                    android:text="โปรดรอการอนุมัติจากเจ้าหน้าที่"
                     android:textColor="@color/black"
                     android:textSize="16sp"
 
@@ -111,7 +111,7 @@
                     android:background="@drawable/login"
                     android:elevation="2dp"
                     android:gravity="center"
-                    android:text="เข้าสู่ระบบ"
+                    android:text="ตกลง"
                     android:textColor="@color/white"
                     android:textSize="16sp" />
 

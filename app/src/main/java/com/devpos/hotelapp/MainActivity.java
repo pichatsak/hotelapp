@@ -13,9 +13,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -24,18 +27,21 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.devpos.hotelapp.databinding.ActivityMainBinding;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
-    private LinearLayout addroom;
-    private ImageView addmainmenu;
     private LinearLayout room1;
     private TextView cancle;
     private LinearLayout pickRoom;
     private LinearLayout SeetingProfile;
+    private TextView nameUser,nameHotel;
 
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
 
         View headerViews = navigationView.getHeaderView(0);
         SeetingProfile = headerViews.findViewById(R.id.SettingProfile);
+        nameUser = headerViews.findViewById(R.id.nameUser);
+        nameHotel = headerViews.findViewById(R.id.nameHotel);
         SeetingProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,23 +85,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        addroom = findViewById(R.id.addroom);
-        addroom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent gotoaddroom = new Intent(MainActivity.this, addmenuroomActivity.class);
-                startActivity(gotoaddroom);
-            }
-        });
 
-        addmainmenu = findViewById(R.id.addmainmenu);
-        addmainmenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent gotoaddmainmenu = new Intent(MainActivity.this, addpageroomActivity.class);
-                startActivity(gotoaddmainmenu);
-            }
-        });
+
+
 
         room1 = findViewById(R.id.room1);
         room1.setOnClickListener(new View.OnClickListener() {
@@ -131,9 +125,27 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
-//
+        getDataUser();
+    }
 
-
+    public void getDataUser(){
+        DocumentReference docRef = db.collection("users").document(MyApplication.getUser_id());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        nameUser.setText(document.getData().get("name").toString());
+                        nameHotel.setText(document.getData().get("listhotel").toString());
+                    } else {
+                        Log.d("CHKDB", "No such document");
+                    }
+                } else {
+                    Log.d("CHKDB", "get failed with ", task.getException());
+                }
+            }
+        });
     }
 
     @Override

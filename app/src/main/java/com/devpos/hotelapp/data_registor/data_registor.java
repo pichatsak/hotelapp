@@ -7,8 +7,17 @@ public class data_registor {
     private String phone;
     private String password_regis;
     private String id;
+    private String status;
 
     public data_registor() {
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getId() {

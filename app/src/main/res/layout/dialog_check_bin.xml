@@ -92,6 +92,7 @@
 
 
             <Spinner
+                android:id="@+id/spinPayType"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
                 android:background="@drawable/day"
@@ -125,7 +126,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableTint="@color/main"
-                android:inputType="text"
+                android:inputType="number"
+                android:id="@+id/pricePayFill"
 
 
                 />
@@ -134,6 +136,9 @@
 
 
         <TextView
+            android:id="@+id/savePay"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_gravity="center"

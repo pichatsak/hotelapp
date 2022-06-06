@@ -25,6 +25,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 public class registorActivity extends AppCompatActivity {
 
@@ -83,28 +85,11 @@ public class registorActivity extends AppCompatActivity {
                     Toast.makeText(registorActivity.this, "กรุณากรอกรหัสผ่าน", Toast.LENGTH_SHORT).show();
                 } else if (password_regis_confirm.getText().toString().isEmpty()) {
                     Toast.makeText(registorActivity.this, "กรุณากรอกยืนยันรหัสผ่าน", Toast.LENGTH_SHORT).show();
-                } else if (password_regis_confirm.getText().toString().equals(password_regis.getText().toString())) {
+                } else if (!password_regis_confirm.getText().toString().equals(password_regis.getText().toString())) {
+                    Toast.makeText(registorActivity.this, "กรุณากรอกรหัสผ่านให้ตรงกัน", Toast.LENGTH_SHORT).show();
+                } else {
                     registor();
                     //ไดอาร็อกเด้งสมัครเสร็จสิ้น
-
-                    final Dialog dialog = new Dialog(registorActivity.this);
-                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    dialog.setCancelable(false);
-                    dialog.setContentView(R.layout.dialog_registor_success);
-                    dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-                    gologin = dialog.findViewById(R.id.gologin);
-                    dialog.show();
-                    gologin.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            dialog.dismiss();
-                            finish();
-                        }
-                    });
-
-
-                } else {
-                    Toast.makeText(registorActivity.this, "กรุณากรอกรหัสผ่านให้ตรงกัน", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -121,54 +106,76 @@ public class registorActivity extends AppCompatActivity {
         String getPhone = phone.getText().toString();
         String getPassword_regis = password_regis.getText().toString();
 
+        db.collection("users")
+                .whereEqualTo("mail", getMail)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            if(task.getResult().size()>0){
+                                Toast.makeText(registorActivity.this, "อีเมลนี้เคยลงทะเบียนไว้แล้ว", Toast.LENGTH_SHORT).show();
+                            }else{
+                                mAuth.createUserWithEmailAndPassword(getMail, getPassword_regis).addOnCompleteListener(registorActivity.this, new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        if (task.isSuccessful()) {
+                                            // Sign in success, update UI with the signed-in user's information
+                                            Log.d("JuiKee", "createUserWithEmail:success");
+                                            FirebaseUser user = mAuth.getCurrentUser();
 
-        mAuth.createUserWithEmailAndPassword(getMail, getPassword_regis).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d("JuiKee", "createUserWithEmail:success");
-                    FirebaseUser user = mAuth.getCurrentUser();
+                                            data_registor data = new data_registor();
+                                            data.setName(getName);
+                                            data.setListhotel(getListhotel);
+                                            data.setMail(getMail);
+                                            data.setPhone(getPhone);
+                                            data.setPassword_regis(getPassword_regis);
+                                            data.setId(user.getUid());
+                                            data.setStatus("wait");
+                                            db.collection("users")
+                                                    .add(data)
+                                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                        @Override
+                                                        public void onSuccess(DocumentReference documentReference) {
+                                                            Log.d("JuiKee", "DocumentSnapshot added with ID: " + documentReference.getId());
+                                                            final Dialog dialog = new Dialog(registorActivity.this);
+                                                            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                                            dialog.setCancelable(false);
+                                                            dialog.setContentView(R.layout.dialog_registor_success);
+                                                            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                                                            gologin = dialog.findViewById(R.id.gologin);
+                                                            dialog.show();
+                                                            gologin.setOnClickListener(new View.OnClickListener() {
+                                                                @Override
+                                                                public void onClick(View view) {
+                                                                    dialog.dismiss();
+                                                                    finish();
+                                                                }
+                                                            });
+                                                        }
+                                                    })
+                                                    .addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            Log.w("JuiKee", "Error adding document", e);
+                                                            Toast.makeText(registorActivity.this, "เกิดข้อผิดพลาดลองใหม่อีกครั้ง", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
+                                        } else {
+                                            // If sign in fails, display a message to the user.
+                                            Log.w("JuiKee", "createUserWithEmail:failure", task.getException());
+                                            Toast.makeText(registorActivity.this, "เกิดข้อผิดพลาดลองใหม่อีกครั้ง", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                            }
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
 
-//                    user.sendEmailVerification()
-//                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                @Override
-//                                public void onComplete(@NonNull Task<Void> task) {
-//                                    if (task.isSuccessful()) {
-//                                        Log.d(TAG, "Email sent.");
-//                                        FirebaseUser user = mAuth.getCurrentUser();
 
-                    data_registor data = new data_registor();
-                    data.setName(getName);
-                    data.setListhotel(getListhotel);
-                    data.setMail(getMail);
-                    data.setPhone(getPhone);
-                    data.setPassword_regis(getPassword_regis);
-                    data.setId(user.getUid());
-
-                    db.collection("users")
-                            .add(data)
-                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                @Override
-                                public void onSuccess(DocumentReference documentReference) {
-                                    Log.d("JuiKee", "DocumentSnapshot added with ID: " + documentReference.getId());
-
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.w("JuiKee", "Error adding document", e);
-                                    Toast.makeText(registorActivity.this, "เกิดข้อผิดพลาดลองใหม่อีกครั้ง", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w("JuiKee", "createUserWithEmail:failure", task.getException());
-                    Toast.makeText(registorActivity.this, "เกิดข้อผิดพลาดลองใหม่อีกครั้ง", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
 
 
     }

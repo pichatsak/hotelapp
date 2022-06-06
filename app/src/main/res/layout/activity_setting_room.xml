@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SettingRoomActivity"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:background="@color/main4"
     android:orientation="vertical">
 
@@ -50,7 +52,7 @@
                             android:gravity="center">
 
                             <TextView
-
+                                android:id="@+id/showNameRoom"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="จองห้อง"
@@ -109,8 +111,7 @@
                     android:layout_height="wrap_content"
                     android:drawableTint="@color/main"
                     android:inputType="text"
-
-
+                    android:id="@+id/rentName"
                     />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -131,12 +132,15 @@
                     android:layout_height="wrap_content"
                     android:drawableTint="@color/main"
                     android:inputType="number"
-
+                    android:id="@+id/rentPerson"
                     />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
+                android:id="@+id/chooseDateStart"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="10dp"
@@ -168,6 +172,9 @@
                 >
 
                 <LinearLayout
+                    android:id="@+id/btnDel"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.8"
@@ -191,10 +198,14 @@
                     android:background="@drawable/day"
                     android:gravity="center"
                     >
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                    <EditText
+                        android:inputType="number"
+                        android:id="@+id/edNumDay"
+                        android:textAlignment="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:text="1"
+                        android:background="@null"
                         android:textSize="16sp"
                         android:textColor="@color/black"
                         />
@@ -202,6 +213,9 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/btnPlus"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.8"
@@ -223,6 +237,7 @@
 
 
             <TextView
+                android:id="@+id/dateEndChoose"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="25dp"
@@ -251,7 +266,7 @@
                     android:layout_height="wrap_content"
                     android:drawableTint="@color/main"
                     android:inputType="number"
-
+                    android:id="@+id/roomPriceDay"
                     />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -271,7 +286,7 @@
                     android:layout_height="wrap_content"
                     android:drawableTint="@color/main"
                     android:inputType="number"
-
+                    android:id="@+id/totalRentRoom"
                     />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -340,71 +355,14 @@
 
                 >
 
-                <LinearLayout
-                    android:layout_marginTop="10dp"
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/viewService"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="3"
-                    android:background="@drawable/frambin"
-                    android:visibility="visible"
-                    android:paddingTop="20dp"
-                    android:paddingBottom="20dp"
-
-                  >
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1.55"
-                        android:gravity="center|start"
-                        android:layout_marginLeft="15dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="ค่าอาหารเช้า"
-                            android:textSize="16sp"
-                            android:paddingRight="15dp"
-                            android:textColor="@color/black"
-                           />
-
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1.15"
-                        android:gravity="center">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="100.-"
-                            android:textSize="16sp"
-                            android:textColor="@color/black"/>
-
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.3"
-                        android:gravity="center|end"
-                        android:layout_marginRight="15dp">
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/ic_baseline_clear_24"/>
-
-                    </LinearLayout>
-
-
-                </LinearLayout>
-
-
-
+                    android:layout_height="wrap_content"/>
 
                <LinearLayout
+                   android:id="@+id/contSeviceEmpty"
                    android:layout_width="match_parent"
                    android:layout_height="80dp"
                    android:gravity="center"
@@ -482,6 +440,7 @@
                         android:gravity="center|start">
 
                         <TextView
+                            android:id="@+id/showTtDay"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="ค่าห้อง X 1 วัน"
@@ -497,9 +456,10 @@
                         android:gravity="center">
 
                         <TextView
+                            android:id="@+id/ttTotalDayRent"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="300.-"
+                            android:text="0.-"
                             android:textSize="16sp"
                             android:textColor="@color/black"/>
 
@@ -545,9 +505,10 @@
                         android:gravity="center">
 
                         <TextView
+                            android:id="@+id/ttTotalService"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="100.-"
+                            android:text="0.-"
                             android:textSize="16sp"
                             android:textColor="@color/black"/>
 
@@ -594,9 +555,11 @@
                         android:gravity="center">
 
                         <TextView
+
+                            android:id="@+id/ttTotalFinal"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="400.-"
+                            android:text="0.-"
                             android:textSize="16sp"
                             android:textColor="@color/main"
                             android:textStyle="bold"/>
@@ -686,69 +649,14 @@
 
                 >
 
-                <LinearLayout
-                    android:layout_marginTop="10dp"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/viewPays"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="3"
-                    android:background="@drawable/frambin"
-                    android:visibility="visible"
-                    android:paddingTop="20dp"
-                    android:paddingBottom="20dp"
-
-                    >
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1.55"
-                        android:gravity="center|start"
-                        android:layout_marginLeft="15dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="เงินสด"
-                            android:textSize="16sp"
-                            android:paddingRight="15dp"
-                            android:textColor="@color/black"
-                           />
-
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1.15"
-                        android:gravity="center">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="400.-"
-                            android:textSize="16sp"
-                            android:textColor="@color/black"/>
-
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.3"
-                        android:gravity="center|end"
-                        android:layout_marginRight="15dp">
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/ic_baseline_clear_24"/>
-
-                    </LinearLayout>
-
-
-                </LinearLayout>
+                    android:layout_height="wrap_content"/>
 
 
                 <LinearLayout
+                    android:id="@+id/showPayEmpty"
                     android:layout_width="match_parent"
                     android:layout_height="80dp"
                     android:gravity="center"
@@ -787,6 +695,9 @@
 
 
             <TextView
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:id="@+id/saveRent"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="40dp"

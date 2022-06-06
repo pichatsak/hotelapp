@@ -126,6 +126,8 @@
 
                 <TextView
                     android:id="@+id/login"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:layout_marginTop="40dp"

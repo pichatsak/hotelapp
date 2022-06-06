@@ -16,6 +16,9 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 public class loginActivity extends AppCompatActivity {
 
@@ -25,6 +28,7 @@ public class loginActivity extends AppCompatActivity {
     private TextInputEditText password_login;
     private TextView login;
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,61 +68,95 @@ public class loginActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mail_login.getText().toString().isEmpty()){
+                if (mail_login.getText().toString().isEmpty()) {
                     Toast.makeText(loginActivity.this, "กรุณากรอกอีเมล", Toast.LENGTH_SHORT).show();
-                }
-                else if (password_login.getText().toString().isEmpty()){
+                } else if (password_login.getText().toString().isEmpty()) {
                     Toast.makeText(loginActivity.this, "กรุณากรอกรหัสผ่าน", Toast.LENGTH_SHORT).show();
-                }
-                else {
+                } else {
                     Login();
 
                 }
             }
         });
 
+    }
 
-
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser != null){
+            db.collection("users")
+                    .whereEqualTo("id", currentUser.getUid())
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    MyApplication.setUser_id(document.getId());
+                                    Intent intent = new Intent(loginActivity.this, MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            }
+                        }
+                    });
+        }
     }
 
     //เข้าสู่ระบบไฟล์เบส
-    public void Login(){
+    public void Login() {
 
         String getMail = mail_login.getText().toString();
         String getPassword = password_login.getText().toString();
-        mAuth.signInWithEmailAndPassword(getMail,getPassword)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+        db.collection("users")
+                .whereEqualTo("mail", getMail)
+                .whereEqualTo("password_regis", getPassword)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("jui", "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            //      boolean getstatus = user.getProviderData().get(0).isEmailVerified();
+                            if (task.getResult().size() > 0) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    Log.d("CHKDB", document.getId() + " => " + document.getData());
+                                    String getStatus = document.getData().get("status").toString();
+                                    if (getStatus.equals("yes")) {
+                                        MyApplication.setUser_id(document.getId());
+                                        mAuth.signInWithEmailAndPassword(getMail, getPassword)
+                                                .addOnCompleteListener(loginActivity.this, new OnCompleteListener<AuthResult>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                                        if (task.isSuccessful()) {
+                                                            // Sign in success, update UI with the signed-in user's information
+                                                            Log.d("jui", "signInWithEmail:success");
+                                                            FirebaseUser user = mAuth.getCurrentUser();
 
-//                            if(user.getProviderData().get(0).isEmailVerified()){
-//                                Log.d("CHKEMAIL","yes");
-//
-//                                Intent jui3 = new Intent(MainActivity.this, momActivity.class);
-//                                startActivity(jui3);
-//                            }else{
-//                                Log.d("CHKEMAIL","no");
-//                                Toast.makeText(MainActivity.this, "กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ", Toast.LENGTH_SHORT).show();
-//                            }
+                                                            Intent intent = new Intent(loginActivity.this, MainActivity.class);
+                                                            startActivity(intent);
+                                                            finish();
 
-
-                            Intent gologin = new Intent(loginActivity.this,MainActivity.class);
-                            startActivity(gologin);
-
-
+                                                        } else {
+                                                            // If sign in fails, display a message to the user.
+                                                            Log.w("jui", "signInWithEmail:failure", task.getException());
+                                                            Toast.makeText(loginActivity.this, "รหัสสมาชิกไม่ถูกต้อง", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    }
+                                                });
+                                    } else {
+                                        Toast.makeText(loginActivity.this, "บัญชีนี้ยังไม่ได้รับการอนุมัตืจากเจ้าหน้าที่", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            } else {
+                                Toast.makeText(loginActivity.this, "อีเมลหรือรหัสผ่านไม่ถูกต้อง", Toast.LENGTH_SHORT).show();
+                            }
                         } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w("jui", "signInWithEmail:failure", task.getException());
-                            Toast.makeText(loginActivity.this, "รหัสสมาชิกไม่ถูกต้อง", Toast.LENGTH_SHORT).show();
-
+                            Log.d("CHKDB", "Error getting documents: ", task.getException());
                         }
                     }
                 });
+
 
     }
 

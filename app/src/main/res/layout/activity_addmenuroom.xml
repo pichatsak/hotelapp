@@ -98,18 +98,19 @@
                     android:layout_height="wrap_content"
                     android:drawableTint="@color/main"
                     android:inputType="text"
-
+                    android:id="@+id/nameRoom"
 
                     />
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
+            <Spinner
+                android:id="@+id/cateChoose"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/framroom"
-                android:text="ห้องทั่วไป"
+                android:text="เลือกหมวดหมู่ห้อง"
                 android:textColor="@color/grey"
                 android:gravity="center|start"
                 android:paddingLeft="15dp"
@@ -130,6 +131,7 @@
                     android:layout_height="wrap_content"
                     android:drawableTint="@color/main"
                     android:inputType="number"
+                    android:id="@+id/priceRoom"
 
 
                     />
@@ -137,6 +139,9 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:id="@+id/addRoom"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="40dp"

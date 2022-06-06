@@ -12,140 +12,238 @@
         android:background="@drawable/background1"
         android:orientation="vertical"
         android:paddingLeft="30dp"
+        android:paddingTop="20dp"
         android:paddingRight="20dp"
-        android:paddingBottom="20dp"
-        android:paddingTop="20dp">
+        android:paddingBottom="20dp">
 
         <TextView
+            android:id="@+id/tvNameRoom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="ห้อง A1"
-            android:textSize="18sp"
-            android:textColor="@color/black"/>
+            android:text="ห้อง"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
 
         <LinearLayout
-            android:id="@+id/pickRoom"
+            android:visibility="gone"
+            android:id="@+id/btnRent"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center|start"
-                android:background="@drawable/ic_basic_hotel_outline_svgrepo_com" />
-
-            <TextView
-
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:text="จองห้อง"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:drawableEnd="@drawable/next1"
-
-              />
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="10dp"
-            android:paddingLeft="45dp">
+            android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/pickRoom"
                 android:layout_width="match_parent"
-                android:layout_height="2px"
-                android:background="@color/line">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|start"
+                    android:background="@drawable/ic_basic_hotel_outline_svgrepo_com" />
+
+                <TextView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:drawableEnd="@drawable/next1"
+                    android:text="จองห้อง"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+
+                    />
 
             </LinearLayout>
 
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="45dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="2px"
+                    android:background="@color/line">
+
+                </LinearLayout>
+
+
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/btnStatusRoom"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:visibility="gone">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center|start"
-                android:background="@drawable/ic_alarm_alert_clock_time_svgrepo_com" />
-
-            <TextView
-
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:text="สถานะการจองห้อง"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center|start"
-                android:background="@drawable/ic_baseline_logout_241" />
-
-            <TextView
-
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:text="เช็คเอ้าท์"
-                android:textColor="@color/red"
-                android:textSize="16sp"
-                android:drawableEnd="@drawable/next1"
-                android:drawableTint="@color/red"/>
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="10dp"
-            android:paddingLeft="45dp">
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="2px"
-                android:background="@color/line">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:visibility="visible">
 
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|start"
+                    android:background="@drawable/ic_alarm_alert_clock_time_svgrepo_com" />
+
+                <TextView
+
+                    android:drawableEnd="@drawable/next1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="เช็คสถานะห้อง"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="45dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="2px"
+                    android:background="@color/line">
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/btnViewRent"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:visibility="visible">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center|start"
+                    android:src="@drawable/viewrent"
+                    app:tint="@color/grey" />
+
+                <TextView
+
+                    android:drawableEnd="@drawable/next1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="ดูข้อมูลการจอง"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="45dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="2px"
+                    android:background="@color/line">
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/btnCheckOut"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|start"
+                    android:background="@drawable/ic_baseline_logout_241" />
+
+                <TextView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:drawableEnd="@drawable/next1"
+                    android:drawableTint="@color/red"
+                    android:text="เช็คเอ้าท์"
+                    android:textColor="@color/red"
+                    android:textSize="16sp" />
             </LinearLayout>
 
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="45dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="2px"
+                    android:background="@color/line">
+
+                </LinearLayout>
+
+
+            </LinearLayout>
         </LinearLayout>
+
 
         <TextView
             android:id="@+id/cancle"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
             android:text="ยกเลิก"
             android:textAlignment="center"
-            android:layout_marginTop="25dp"
-            android:textSize="16sp"
-            android:textColor="@color/main"/>
+            android:textColor="@color/main"
+            android:textSize="16sp" />
 
 
+        <!--        <LinearLayout-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="30dp">-->
 
-<!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="30dp">-->
-
-<!--        </LinearLayout>-->
+        <!--        </LinearLayout>-->
 
 
     </LinearLayout>

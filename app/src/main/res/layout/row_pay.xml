@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="75dp">
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="3"
+        android:background="@drawable/frambin"
+        android:visibility="visible"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+
+        >
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.55"
+            android:gravity="center|start"
+            android:layout_marginLeft="15dp">
+
+            <TextView
+                android:id="@+id/typePayShow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ประเภท"
+                android:textSize="16sp"
+                android:paddingRight="15dp"
+                android:textColor="@color/black"
+                />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.15"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/pricePayShow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.-"
+                android:textSize="16sp"
+                android:textColor="@color/black"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3"
+            android:gravity="center|end"
+            android:layout_marginRight="15dp">
+
+            <ImageView
+                android:id="@+id/delRow"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_baseline_clear_24"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+</LinearLayout>
