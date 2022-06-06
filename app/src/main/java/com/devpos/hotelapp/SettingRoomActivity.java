@@ -40,23 +40,28 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
 public class SettingRoomActivity extends AppCompatActivity {
 
-    private ImageView addOrther ;
+    private ImageView addOrther;
     private ImageView closedialog;
     private ImageView addBin;
     private ImageView backhome;
@@ -64,18 +69,18 @@ public class SettingRoomActivity extends AppCompatActivity {
     private String KEY_ROOM = "";
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    private TextInputEditText totalRentRoom,roomPriceDay;
+    private TextInputEditText totalRentRoom, roomPriceDay;
     private EditText edNumDay;
-    private int numDayRent =1;
-    private int priceRoom =0;
-    private int TotalRoom =0;
-    private int totalRentFinal =0;
-    private int totalPay =0;
+    private int numDayRent = 1;
+    private int priceRoom = 0;
+    private int TotalRoom = 0;
+    private int totalRentFinal = 0;
+    private int totalPay = 0;
 
-    private LinearLayout btnDel,btnPlus;
-    private String edOld="";
+    private LinearLayout btnDel, btnPlus;
+    private String edOld = "";
 
-    private TextView chooseDateStart,dateEndChoose;
+    private TextView chooseDateStart, dateEndChoose;
     private Calendar date = null;
     private Calendar dateEnd = null;
 
@@ -83,14 +88,17 @@ public class SettingRoomActivity extends AppCompatActivity {
     private LinearLayout contSeviceEmpty;
     private RecyclerView viewService;
 
-    private TextView showTtDay,ttTotalDayRent,ttTotalService,ttTotalFinal;
+    private TextView showTtDay, ttTotalDayRent, ttTotalService, ttTotalFinal;
 
     private LinearLayout showPayEmpty;
     private RecyclerView viewPays;
     private ArrayList<PayModel> payModelArrayList = new ArrayList<>();
 
     private TextView saveRent;
-    private TextInputEditText rentName,rentPerson;
+    private TextInputEditText rentName, rentPerson;
+    private String statusSave = "";
+    private String rentId = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,6 +138,13 @@ public class SettingRoomActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             KEY_ROOM = bundle.getString("roomKey");
+            statusSave = bundle.getString("statusSave");
+            if (statusSave.equals("new")) {
+                saveRent.setText("ยืนยันการจอง");
+            } else {
+                rentId = bundle.getString("rentId");
+                saveRent.setText("บันทึกข้อมูล");
+            }
         }
         setClickBtnAll();
         getDataRoom();
@@ -138,52 +153,125 @@ public class SettingRoomActivity extends AppCompatActivity {
         getListMorePrice();
         getListPay();
         setClickSave();
+        if (statusSave.equals("edit")) {
+            getDataEdit();
+        }
+    }
 
-//        db.collection("rooms")
-//                .whereEqualTo("userId", MyApplication.getUser_id())
-//                .get()
-//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                        if (task.isSuccessful()) {
-//                            for (QueryDocumentSnapshot document : task.getResult()) {
-//                                Map<String, Object> friendsMap = (Map<String, Object>) document.getData().get("listRoom");
-//                                Map<String, Object> value = (Map<String, Object>) friendsMap.get(KEY_ROOM);
-//                                db.collection("rooms").document(document.getId()).update("listRoom."+KEY_ROOM+".statusRoom","busy");
-//                            }
-//                        }
-//                    }
-//                });
+    private void getDataEdit() {
+        db.collection("rents")
+                .whereEqualTo("userId", MyApplication.getUser_id())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Map<String, Object> friendsMap = (Map<String, Object>) document.getData().get("listRents");
+                                if (friendsMap.size() > 0) {
+                                    Map<String, Object> value = (Map<String, Object>) friendsMap.get(rentId);
+                                    rentName.setText(value.get("rentName").toString());
+                                    rentPerson.setText(value.get("rentPerson").toString());
+                                    KEY_ROOM = value.get("roomId").toString();
+                                    Timestamp timestamp = (Timestamp) value.get("dateStart");
+                                    Date dateGetStart = timestamp.toDate();
+                                    SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyy HH:mm", Locale.US);
+                                    String dateStartTxt = df.format(dateGetStart);
+                                    chooseDateStart.setText(dateStartTxt);
+                                    date = Calendar.getInstance();
+                                    date.setTime(dateGetStart);
+                                    Log.d("CHKDATERENT", "get date start : " + date.getTime());
+
+                                    Timestamp timestampEnd = (Timestamp) value.get("dateEnd");
+                                    priceRoom = Integer.parseInt(value.get("roomPriceDay").toString());
+                                    roomPriceDay.setText(String.valueOf(priceRoom));
+
+                                    numDayRent = Integer.parseInt(value.get("rentDay").toString());
+                                    edNumDay.setText(String.valueOf(numDayRent));
+
+                                    Gson gson = new Gson();
+                                    Type type = new TypeToken<ArrayList<ServiceModel>>() {
+                                    }.getType();
+                                    serviceModelArrayList = gson.fromJson(value.get("listService").toString(), type);
+
+                                    Type type2 = new TypeToken<ArrayList<PayModel>>() {
+                                    }.getType();
+                                    payModelArrayList = gson.fromJson(value.get("listPay").toString(), type2);
+
+                                    setNewTotalAll();
+                                    getListMorePrice();
+                                    getListPay();
+                                }
+                            }
+                        }
+                    }
+                });
     }
 
     private void setClickSave() {
         saveRent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("CHK_DATA_SAVE",totalPay+".-");
-                if(rentName.getText().toString().isEmpty()){
+                Log.d("CHK_DATA_SAVE", totalPay + ".-");
+                if (rentName.getText().toString().isEmpty()) {
                     rentName.setError("กรุณากรอกชื่อผู้เข้าพัก");
                     rentName.requestFocus();
-                }else if(rentPerson.getText().toString().isEmpty()){
+                } else if (rentPerson.getText().toString().isEmpty()) {
                     rentPerson.setError("กรุณากรอกจำนวนผู้เข้าพัก");
                     rentPerson.requestFocus();
-                }else if(date==null){
+                } else if (date == null) {
                     Toast.makeText(SettingRoomActivity.this, "กรุณาเลือกวันเวลาเข้าพัก", Toast.LENGTH_SHORT).show();
-                }else if(roomPriceDay.getText().toString().isEmpty()){
+                } else if (roomPriceDay.getText().toString().isEmpty()) {
                     roomPriceDay.setError("กรุณากรอกราคาห้อง");
                     roomPriceDay.requestFocus();
-                }else if(totalRentRoom.getText().toString().isEmpty()){
+                } else if (totalRentRoom.getText().toString().isEmpty()) {
                     totalRentRoom.setError("กรุณากรอกยอดรวมค่าห้อง");
                     totalRentRoom.requestFocus();
-                }else if(payModelArrayList.size()==0){
+                } else if (payModelArrayList.size() == 0) {
                     Toast.makeText(SettingRoomActivity.this, "กรุณาบันทึกการชำระเงิน", Toast.LENGTH_SHORT).show();
-                }else if(totalPay<totalRentFinal){
+                } else if (totalPay < totalRentFinal) {
                     Toast.makeText(SettingRoomActivity.this, "ยอดรวมการชำระเงินไม่เพียงพอ", Toast.LENGTH_SHORT).show();
-                }else{
-                    setSaveRent();
+                } else {
+                    if (statusSave.equals("new")) {
+                        setSaveRent();
+                    } else {
+                        setEditRent();
+                    }
                 }
             }
         });
+    }
+
+    private void setEditRent() {
+        db.collection("rents")
+                .whereEqualTo("userId", MyApplication.getUser_id())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                String docId = document.getId();
+                                db.collection("rents").document(docId).update(
+                                        "listRents."+rentId+".rentName",rentName.getText().toString(),
+                                        "listRents."+rentId+".rentPerson",rentPerson.getText().toString(),
+                                        "listRents."+rentId+".dateStart",date.getTime(),
+                                        "listRents."+rentId+".dateEnd",dateEnd.getTime(),
+                                        "listRents."+rentId+".rentDay",numDayRent,
+                                        "listRents."+rentId+".roomPriceDay",Integer.valueOf(roomPriceDay.getText().toString()),
+                                        "listRents."+rentId+".totalRentRoom",Integer.valueOf(totalRentRoom.getText().toString()),
+                                        "listRents."+rentId+".listPay",payModelArrayList,
+                                        "listRents."+rentId+".listService",serviceModelArrayList
+                                        );
+                                Intent returnIntent = new Intent();
+                                setResult(Activity.RESULT_OK, returnIntent);
+                                finish();
+                            }
+                        } else {
+                            Log.d("CHKDB", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
     }
 
     private void setSaveRent() {
@@ -194,7 +282,7 @@ public class SettingRoomActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            if(task.getResult().size()>0){
+                            if (task.getResult().size() > 0) {
                                 db.collection("rents")
                                         .whereEqualTo("userId", MyApplication.getUser_id())
                                         .get()
@@ -216,11 +304,12 @@ public class SettingRoomActivity extends AppCompatActivity {
                                                         newRent.put("status", "renting");
                                                         newRent.put("roomPriceDay", Integer.valueOf(roomPriceDay.getText().toString()));
                                                         newRent.put("totalRentRoom", Integer.valueOf(totalRentRoom.getText().toString()));
-                                                        db.collection("rents").document(lastId).update("listRents."+rentNewId,newRent);
-                                                        db.collection("rents").document(lastId).update("listRents."+rentNewId+".listPay",payModelArrayList);
+                                                        db.collection("rents").document(lastId).update("listRents." + rentNewId, newRent);
+                                                        db.collection("rents").document(lastId).update("listRents." + rentNewId + ".listPay", payModelArrayList);
+                                                        db.collection("rents").document(lastId).update("listRents." + rentNewId + ".listService", serviceModelArrayList);
                                                         Intent returnIntent = new Intent();
-                                                        returnIntent.putExtra("rentId",rentNewId);
-                                                        setResult(Activity.RESULT_OK,returnIntent);
+                                                        returnIntent.putExtra("rentId", rentNewId);
+                                                        setResult(Activity.RESULT_OK, returnIntent);
                                                         finish();
                                                     }
                                                 } else {
@@ -228,7 +317,7 @@ public class SettingRoomActivity extends AppCompatActivity {
                                                 }
                                             }
                                         });
-                            }else{
+                            } else {
                                 Rents rents = new Rents();
                                 rents.setUserId(MyApplication.getUser_id());
                                 db.collection("rents")
@@ -249,11 +338,12 @@ public class SettingRoomActivity extends AppCompatActivity {
                                                 newRent.put("status", "renting");
                                                 newRent.put("roomPriceDay", Integer.valueOf(roomPriceDay.getText().toString()));
                                                 newRent.put("totalRentRoom", Integer.valueOf(totalRentRoom.getText().toString()));
-                                                db.collection("rents").document(lastId).update("listRents."+rentNewId,newRent);
-                                                db.collection("rents").document(lastId).update("listRents."+rentNewId+".listPay",payModelArrayList);
+                                                db.collection("rents").document(lastId).update("listRents." + rentNewId, newRent);
+                                                db.collection("rents").document(lastId).update("listRents." + rentNewId + ".listPay", payModelArrayList);
+                                                db.collection("rents").document(lastId).update("listRents." + rentNewId + ".listService", serviceModelArrayList);
                                                 Intent returnIntent = new Intent();
-                                                returnIntent.putExtra("rentId",rentNewId);
-                                                setResult(Activity.RESULT_OK,returnIntent);
+                                                returnIntent.putExtra("rentId", rentNewId);
+                                                setResult(Activity.RESULT_OK, returnIntent);
                                                 finish();
                                             }
                                         })
@@ -272,9 +362,9 @@ public class SettingRoomActivity extends AppCompatActivity {
     }
 
     private void getListPay() {
-        if(payModelArrayList.size()==0){
+        if (payModelArrayList.size() == 0) {
             showPayEmpty.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             showPayEmpty.setVisibility(View.GONE);
         }
         totalPay = 0;
@@ -297,9 +387,9 @@ public class SettingRoomActivity extends AppCompatActivity {
     }
 
     private void getListMorePrice() {
-        if(serviceModelArrayList.size()==0){
+        if (serviceModelArrayList.size() == 0) {
             contSeviceEmpty.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             contSeviceEmpty.setVisibility(View.GONE);
         }
         viewService.setHasFixedSize(true);
@@ -339,7 +429,7 @@ public class SettingRoomActivity extends AppCompatActivity {
                                 chooseDateStart.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm").format(date.getTime()));
                                 setNewDateEnd();
                             }
-                        },currentDate.get(Calendar.HOUR_OF_DAY), currentDate.get(Calendar.MINUTE), true).show();
+                        }, currentDate.get(Calendar.HOUR_OF_DAY), currentDate.get(Calendar.MINUTE), true).show();
 
                     }
                 }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), currentDate.get(Calendar.DATE));
@@ -350,7 +440,7 @@ public class SettingRoomActivity extends AppCompatActivity {
     }
 
     private void setNewDateEnd() {
-        Date dtStartDate=date.getTime();
+        Date dtStartDate = date.getTime();
         dateEnd = Calendar.getInstance();
         dateEnd.setTime(dtStartDate);
         dateEnd.add(Calendar.DATE, numDayRent);
@@ -363,7 +453,7 @@ public class SettingRoomActivity extends AppCompatActivity {
         btnPlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                numDayRent = numDayRent+1;
+                numDayRent = numDayRent + 1;
                 edNumDay.setText(String.valueOf(numDayRent));
                 setNewTotalAll();
             }
@@ -371,36 +461,38 @@ public class SettingRoomActivity extends AppCompatActivity {
         btnDel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(numDayRent-1!=0){
-                    numDayRent = numDayRent-1;
+                if (numDayRent - 1 != 0) {
+                    numDayRent = numDayRent - 1;
                     edNumDay.setText(String.valueOf(numDayRent));
                     setNewTotalAll();
-                }else {
+                } else {
                     Toast.makeText(SettingRoomActivity.this, "ไม่สามารถลดได้มากกว่านี้", Toast.LENGTH_SHORT).show();
                 }
             }
         });
         edNumDay.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
-                Log.d("CHKTXT","after : "+s.toString());
+                Log.d("CHKTXT", "after : " + s.toString());
                 numDayRent = Integer.valueOf(s.toString());
-                if(date!=null){
+                if (date != null) {
                     setNewDateEnd();
                 }
             }
+
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                Log.d("CHKTXT","before : "+s.toString());
+                Log.d("CHKTXT", "before : " + s.toString());
                 edOld = s.toString();
                 edNumDay.setSelection(edNumDay.getText().length());
                 numDayRent = Integer.valueOf(edOld);
             }
+
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.d("CHKTXT","changed : "+s.toString());
-                if(s.toString().isEmpty()){
+                Log.d("CHKTXT", "changed : " + s.toString());
+                if (s.toString().isEmpty()) {
                     edNumDay.setText(edOld);
                     edNumDay.setSelection(edNumDay.getText().length());
                     numDayRent = Integer.valueOf(edOld);
-                }else if(s.toString().equals("0")){
+                } else if (s.toString().equals("0")) {
                     edNumDay.setText(edOld);
                     edNumDay.setSelection(edNumDay.getText().length());
                     numDayRent = Integer.valueOf(edOld);
@@ -421,9 +513,14 @@ public class SettingRoomActivity extends AppCompatActivity {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Map<String, Object> friendsMap = (Map<String, Object>) document.getData().get("listRoom");
                                 Map<String, Object> value = (Map<String, Object>) friendsMap.get(KEY_ROOM);
-                                showNameRoom.setText("จองห้อง "+value.get("roomName").toString());
+
                                 roomPriceDay.setText(value.get("roomPrice").toString());
                                 priceRoom = Integer.valueOf(value.get("roomPrice").toString());
+                                if (statusSave.equals("edit")) {
+                                    showNameRoom.setText("แก้ไขข้อมูลการจองห้อง " + value.get("roomName").toString());
+                                } else {
+                                    showNameRoom.setText("จองห้อง " + value.get("roomName").toString());
+                                }
                                 setNewTotalAll();
                             }
                         } else {
@@ -433,31 +530,31 @@ public class SettingRoomActivity extends AppCompatActivity {
                 });
     }
 
-    public void setNewTotalAll(){
+    public void setNewTotalAll() {
 
-        showTtDay.setText("ค่าห้อง X "+numDayRent+" วัน");
-        int newTotalRoom = priceRoom*numDayRent;
+        showTtDay.setText("ค่าห้อง X " + numDayRent + " วัน");
+        int newTotalRoom = priceRoom * numDayRent;
         TotalRoom = newTotalRoom;
-        ttTotalDayRent.setText(TotalRoom+".-");
-        if(serviceModelArrayList.size()==0){
+        ttTotalDayRent.setText(TotalRoom + ".-");
+        if (serviceModelArrayList.size() == 0) {
             totalRentFinal = newTotalRoom;
             totalRentRoom.setText(String.valueOf(TotalRoom));
-            ttTotalFinal.setText(totalRentFinal+".-");
+            ttTotalFinal.setText(totalRentFinal + ".-");
             ttTotalService.setText("0.-");
-        }else{
+        } else {
             int getSvTotal = 0;
             for (ServiceModel objects : serviceModelArrayList) {
                 getSvTotal += objects.getPrice();
             }
-            totalRentFinal = newTotalRoom+getSvTotal;
+            totalRentFinal = newTotalRoom + getSvTotal;
             totalRentRoom.setText(String.valueOf(TotalRoom));
-            ttTotalService.setText(getSvTotal+".-");
-            ttTotalFinal.setText(totalRentFinal+".-");
+            ttTotalService.setText(getSvTotal + ".-");
+            ttTotalFinal.setText(totalRentFinal + ".-");
         }
 
     }
 
-    public void setClickBtnAll(){
+    public void setClickBtnAll() {
         addOrther.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -468,20 +565,20 @@ public class SettingRoomActivity extends AppCompatActivity {
                 dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
                 dialog.show();
 
-                Display display =((WindowManager)getSystemService(SettingRoomActivity.this.WINDOW_SERVICE)).getDefaultDisplay();
+                Display display = ((WindowManager) getSystemService(SettingRoomActivity.this.WINDOW_SERVICE)).getDefaultDisplay();
                 int width = display.getWidth();
-                int height=display.getHeight();
-                Log.v("width", width+"");
-                dialog.getWindow().setLayout((6*width)/7,(6*height)/9);
+                int height = display.getHeight();
+                Log.v("width", width + "");
+                dialog.getWindow().setLayout((6 * width) / 7, (6 * height) / 9);
                 TextInputEditText nameFillSevice = dialog.findViewById(R.id.nameFillSevice);
                 TextInputEditText priceFillSevice = dialog.findViewById(R.id.priceFillSevice);
                 TextView saveService = dialog.findViewById(R.id.saveService);
                 saveService.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(nameFillSevice.getText().toString().isEmpty()||priceFillSevice.getText().toString().isEmpty()){
+                        if (nameFillSevice.getText().toString().isEmpty() || priceFillSevice.getText().toString().isEmpty()) {
                             Toast.makeText(SettingRoomActivity.this, "กรุณากรอกข้อมูลให้ครบถ้วน", Toast.LENGTH_SHORT).show();
-                        }else{
+                        } else {
                             ServiceModel serviceModel = new ServiceModel();
                             serviceModel.setNameService(nameFillSevice.getText().toString());
                             serviceModel.setPrice(Integer.valueOf(priceFillSevice.getText().toString()));
@@ -513,11 +610,11 @@ public class SettingRoomActivity extends AppCompatActivity {
                 dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
                 dialog.show();
 
-                Display display =((WindowManager)getSystemService(SettingRoomActivity.this.WINDOW_SERVICE)).getDefaultDisplay();
+                Display display = ((WindowManager) getSystemService(SettingRoomActivity.this.WINDOW_SERVICE)).getDefaultDisplay();
                 int width = display.getWidth();
-                int height=display.getHeight();
-                Log.v("width", width+"");
-                dialog.getWindow().setLayout((6*width)/7,(6*height)/9);
+                int height = display.getHeight();
+                Log.v("width", width + "");
+                dialog.getWindow().setLayout((6 * width) / 7, (6 * height) / 9);
 
                 Spinner spinPayType = dialog.findViewById(R.id.spinPayType);
                 TextInputEditText pricePayFill = dialog.findViewById(R.id.pricePayFill);
@@ -527,15 +624,15 @@ public class SettingRoomActivity extends AppCompatActivity {
                 mPayType.add("เงินสด");
                 mPayType.add("เงินโอน");
                 mPayType.add("เครดิต");
-                ArrayAdapter<String> adapterThai = new ArrayAdapter<String>(dialog.getContext(),android.R.layout.simple_dropdown_item_1line, mPayType);
+                ArrayAdapter<String> adapterThai = new ArrayAdapter<String>(dialog.getContext(), android.R.layout.simple_dropdown_item_1line, mPayType);
                 spinPayType.setAdapter(adapterThai);
 
                 savePay.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(pricePayFill.getText().toString().isEmpty()){
+                        if (pricePayFill.getText().toString().isEmpty()) {
                             Toast.makeText(SettingRoomActivity.this, "กรุณากรอกยอดเงิน", Toast.LENGTH_SHORT).show();
-                        }else{
+                        } else {
                             PayModel payModel = new PayModel();
                             payModel.setPricePay(Integer.valueOf(pricePayFill.getText().toString()));
                             payModel.setTypePay(mPayType.get(spinPayType.getSelectedItemPosition()));

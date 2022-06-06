@@ -15,14 +15,54 @@
         android:paddingTop="20dp"
         android:paddingRight="20dp"
         android:paddingBottom="20dp">
-
-        <TextView
-            android:id="@+id/tvNameRoom"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="ห้อง"
-            android:textColor="@color/black"
-            android:textSize="18sp" />
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_centerVertical="true"
+                android:id="@+id/tvNameRoom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ห้อง"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+            <LinearLayout
+                android:id="@+id/conManage"
+                android:visibility="gone"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:id="@+id/editRoom"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:padding="5dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp">
+                    <ImageView
+                        android:src="@drawable/edit2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:tint="@color/main6" />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/delRoom"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:layout_marginLeft="5dp"
+                    android:padding="3dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp">
+                    <ImageView
+                        android:src="@drawable/delete"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:tint="@color/red" />
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+
 
         <LinearLayout
             android:visibility="gone"
@@ -77,7 +117,58 @@
 
             </LinearLayout>
         </LinearLayout>
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/btnRentAfter"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|start"
+                    android:background="@drawable/ic_basic_hotel_outline_svgrepo_com" />
+
+                <TextView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:drawableEnd="@drawable/next1"
+                    android:text="จองห้องล่วงหน้า"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+
+                    />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="45dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="2px"
+                    android:background="@color/line">
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+        </LinearLayout>
         <LinearLayout
             android:visibility="gone"
             android:id="@+id/btnStatusRoom"
@@ -125,7 +216,6 @@
 
             </LinearLayout>
         </LinearLayout>
-
         <LinearLayout
             android:visibility="gone"
             android:id="@+id/btnViewRent"
@@ -174,7 +264,6 @@
 
             </LinearLayout>
         </LinearLayout>
-
         <LinearLayout
             android:visibility="gone"
             android:id="@+id/btnCheckOut"
@@ -224,7 +313,56 @@
 
             </LinearLayout>
         </LinearLayout>
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/btnCancel"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center|start"
+                    android:src="@drawable/close"
+                    app:tint="@color/red" />
+
+                <TextView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:drawableEnd="@drawable/next1"
+                    android:drawableTint="@color/red"
+                    android:text="ยกเลิกการจอง"
+                    android:textColor="@color/red"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="45dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="2px"
+                    android:background="@color/line">
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+        </LinearLayout>
 
         <TextView
             android:id="@+id/cancle"
@@ -233,7 +371,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
-            android:text="ยกเลิก"
+            android:text="ปิด"
             android:textAlignment="center"
             android:textColor="@color/main"
             android:textSize="16sp" />

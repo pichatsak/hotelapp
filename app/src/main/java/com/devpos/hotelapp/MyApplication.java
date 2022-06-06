@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 public class MyApplication extends Application {
     private static String user_id;
+    private static String rentIdViewCur;
     private static String type;
     private static String urlStorage ="gs://engless2022.appspot.com";
     @Override
@@ -22,5 +23,13 @@ public class MyApplication extends Application {
 
     public static void setUser_id(String user_id) {
         MyApplication.user_id = user_id;
+    }
+
+    public static String getRentIdViewCur() {
+        return rentIdViewCur;
+    }
+
+    public static void setRentIdViewCur(String rentIdViewCur) {
+        MyApplication.rentIdViewCur = rentIdViewCur;
     }
 }

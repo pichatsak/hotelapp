@@ -17,19 +17,27 @@ import android.widget.Toast;
 import com.devpos.hotelapp.FirebaseModels.CateRooms;
 import com.devpos.hotelapp.FirebaseModels.Rooms;
 import com.devpos.hotelapp.models.CateRoomModels;
+import com.devpos.hotelapp.models.PayModel;
 import com.devpos.hotelapp.models.RoomModel;
+import com.devpos.hotelapp.models.ServiceModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -42,6 +50,9 @@ public class addmenuroomActivity extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private ArrayList<CateRoomModels> cateRoomModelsArrayList = new ArrayList<>();
     private String keyCate="";
+    private String statusSave= "";
+    private String roomId= "";
+    private TextView titleTv;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,10 +62,20 @@ public class addmenuroomActivity extends AppCompatActivity {
         backhome = findViewById(R.id.backhome);
         priceRoom = findViewById(R.id.priceRoom);
         addRoom = findViewById(R.id.addRoom);
+        titleTv = findViewById(R.id.titleTv);
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             keyCate = bundle.getString("cateKey");
+            statusSave = bundle.getString("statusSave");
+            if(statusSave.equals("add")){
+                titleTv.setText("เพิ่มห้อง");
+            }else{
+                titleTv.setText("แก้ไขห้อง");
+                roomId = bundle.getString("roomId");
+                Log.d("CHKROOMID",roomId);
+                getDataEdit();
+            }
         }
 
         backhome.setOnClickListener(new View.OnClickListener() {
@@ -67,11 +88,68 @@ public class addmenuroomActivity extends AppCompatActivity {
         addRoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveRoom();
+                if(statusSave.equals("add")){
+                    saveRoom();
+                }else{
+                    editRoom();
+                }
             }
         });
 
         getCateChoose();
+    }
+
+    private void getDataEdit() {
+        db.collection("rooms")
+                .whereEqualTo("userId", MyApplication.getUser_id())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Map<String, Object> friendsMap = (Map<String, Object>) document.getData().get("listRoom");
+                                Map<String, Object> value = (Map<String, Object>) friendsMap.get(roomId);
+                                nameRoom.setText(value.get("roomName").toString());
+                                priceRoom.setText(value.get("roomPrice").toString());
+
+                            }
+                        }
+                    }
+                });
+    }
+
+    private void editRoom() {
+        if(nameRoom.getText().toString().isEmpty()){
+            Toast.makeText(this, "กรุณากรอกชื่อห้อง", Toast.LENGTH_SHORT).show();
+        }else if(priceRoom.getText().toString().isEmpty()){
+            Toast.makeText(this, "กรุณากรอกราคาห้อง", Toast.LENGTH_SHORT).show();
+        }else if(cateChoose.getSelectedItemPosition()==0){
+            Toast.makeText(this, "กรุณาเลือกหมวดหมู่ห้อง", Toast.LENGTH_SHORT).show();
+        }else{
+            db.collection("rooms")
+                    .whereEqualTo("userId", MyApplication.getUser_id())
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    String lastId = document.getId();
+                                    db.collection("rooms").document(lastId).update(
+                                            "listRoom."+roomId+".roomName",nameRoom.getText().toString(),
+                                            "listRoom."+roomId+".roomPrice",Integer.valueOf(priceRoom.getText().toString()),
+                                            "listRoom."+roomId+".cateId",cateRoomModelsArrayList.get(cateChoose.getSelectedItemPosition()).getCateKey());
+                                    Intent returnIntent = new Intent();
+                                    setResult(Activity.RESULT_OK,returnIntent);
+                                    finish();
+                                }
+                            } else {
+                                Log.d("CHKDB", "Error getting documents: ", task.getException());
+                            }
+                        }
+                    });
+        }
     }
 
     private void saveRoom() {

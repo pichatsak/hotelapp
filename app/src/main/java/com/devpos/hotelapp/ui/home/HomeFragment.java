@@ -27,13 +27,19 @@ import com.devpos.hotelapp.MainActivity;
 import com.devpos.hotelapp.MyApplication;
 import com.devpos.hotelapp.R;
 import com.devpos.hotelapp.SettingRoomActivity;
+import com.devpos.hotelapp.ViewRentActivity;
+import com.devpos.hotelapp.ViewStatusRoomActivity;
 import com.devpos.hotelapp.adaptors.CateRoomAdapter;
 import com.devpos.hotelapp.adaptors.RoomsAdapter;
 import com.devpos.hotelapp.addmenuroomActivity;
 import com.devpos.hotelapp.addpageroomActivity;
 import com.devpos.hotelapp.databinding.FragmentHomeBinding;
+import com.devpos.hotelapp.dialog.DialogConfirm;
+import com.devpos.hotelapp.dialog.DialogPrint;
 import com.devpos.hotelapp.models.CateRoomModels;
+import com.devpos.hotelapp.models.PayModel;
 import com.devpos.hotelapp.models.RoomModel;
+import com.devpos.hotelapp.models.ServiceModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -45,11 +51,16 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -138,14 +149,33 @@ public class HomeFragment extends Fragment {
                                     public void OnClickChoose(int position, String statusClick, RoomModel roomModel) {
                                         if (statusClick.equals("add")) {
                                             Intent gotoaddroom = new Intent(getContext(), addmenuroomActivity.class);
+                                            gotoaddroom.putExtra("statusSave","add");
                                             gotoaddroom.putExtra("cateKey", CATE_KEY_CURRENT);
                                             startActivityForResult(gotoaddroom, LAUNCH_ADD_ROOM);
                                         } else if (statusClick.equals("rent")) {
                                             Intent gotosettingroom = new Intent(getContext(), SettingRoomActivity.class);
                                             gotosettingroom.putExtra("roomKey", roomModel.getRoomId());
+                                            gotosettingroom.putExtra("statusSave", "new");
                                             startActivityForResult(gotosettingroom, LAUNCH_RENT_NEW);
                                         } else if (statusClick.equals("checkOut")) {
                                             goCheckOut(roomModel);
+                                        } else if (statusClick.equals("viewRent")) {
+                                            Intent goToRentView = new Intent(getContext(), ViewRentActivity.class);
+                                            startActivityForResult(goToRentView, LAUNCH_ADD_ROOM);
+                                        } else if (statusClick.equals("cancelRent")) {
+                                            goCancel();
+                                        } else if (statusClick.equals("editRoom")) {
+                                            Intent goEditRoom = new Intent(getContext(), addmenuroomActivity.class);
+                                            goEditRoom.putExtra("statusSave","edit");
+                                            goEditRoom.putExtra("cateKey", CATE_KEY_CURRENT);
+                                            goEditRoom.putExtra("roomId", roomModel.getRoomId());
+                                            startActivityForResult(goEditRoom, LAUNCH_ADD_ROOM);
+                                        } else if (statusClick.equals("delRoom")) {
+                                            goDelRoom(roomModel.getRoomId());
+                                        } else if (statusClick.equals("viewStatusRoom")) {
+                                            Intent goViewStatusRoom = new Intent(getContext(), ViewStatusRoomActivity.class);
+                                            goViewStatusRoom.putExtra("roomId", roomModel.getRoomId());
+                                            startActivityForResult(goViewStatusRoom, LAUNCH_ADD_ROOM);
                                         }
                                     }
                                 });
@@ -158,45 +188,151 @@ public class HomeFragment extends Fragment {
                 });
     }
 
+    private void goDelRoom(String roomId) {
+        DialogConfirm dialogConfirm = new DialogConfirm(getContext(), "delete", "ต้องการลบห้องนี้?", new DialogConfirm.OnClickDialog() {
+            @Override
+            public void OnConfirm() {
+                db.collection("rooms")
+                        .whereEqualTo("userId", MyApplication.getUser_id())
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        Map<String, Object> friendsMap = (Map<String, Object>) document.getData().get("listRoom");
+                                        if (friendsMap.size() > 0) {
+                                            Map<String, Object> value = (Map<String, Object>) friendsMap.get(roomId);
+                                            Map<String, Object> updateDEl = new HashMap<>();
+                                            updateDEl.put("listRoom." + roomId, FieldValue.delete());
+                                            db.collection("rooms").document(document.getId()).update(updateDEl);
+                                            getDataRooms(CATE_KEY_CURRENT);
+                                        }
+                                    }
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void OnCancel() {
+                Log.d("CHKCONFIRM", "no");
+            }
+        }).openDialog();
+    }
+
+    private void goCancel() {
+        DialogConfirm dialogConfirm = new DialogConfirm(getContext(), "delete", "ยกเลิกการจองนี้?", new DialogConfirm.OnClickDialog() {
+            @Override
+            public void OnConfirm() {
+                db.collection("rents")
+                        .whereEqualTo("userId", MyApplication.getUser_id())
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        Map<String, Object> friendsMap = (Map<String, Object>) document.getData().get("listRents");
+                                        String keyRent = MyApplication.getRentIdViewCur();
+                                        if (friendsMap.size() > 0) {
+                                            Map<String, Object> value = (Map<String, Object>) friendsMap.get(keyRent);
+                                            Map<String, Object> updateDEl = new HashMap<>();
+                                            updateDEl.put("listRents." + keyRent, FieldValue.delete());
+                                            db.collection("rents").document(document.getId()).update(updateDEl);
+                                            getDataRooms(CATE_KEY_CURRENT);
+                                        }
+                                    }
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void OnCancel() {
+                Log.d("CHKCONFIRM", "no");
+            }
+        }).openDialog();
+    }
+
     private void goCheckOut(RoomModel roomModel) {
-        db.collection("rents")
-                .whereEqualTo("userId", MyApplication.getUser_id())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                String keyMain = document.getId();
-                                Map<String, Object> friendsMap = (Map<String, Object>) document.getData().get("listRents");
-                                for (Map.Entry<String, Object> entry : friendsMap.entrySet()) {
-                                    String key = entry.getKey();
-                                    Map<String, Object> value = (Map<String, Object>) entry.getValue();
-                                    if (roomModel.getRoomId().equals(value.get("roomId").toString())) {
-                                        Timestamp timeStart = (Timestamp) value.get("dateStart");
-                                        Timestamp timeEnd = (Timestamp) value.get("dateEnd");
-                                        Calendar curDate = Calendar.getInstance();
-                                        Date dateCur = curDate.getTime();
-                                        Date dateStart = timeStart.toDate();
-                                        Date dateEnd = timeEnd.toDate();
-                                        if (dateCur.getTime() >= dateStart.getTime() && dateCur.getTime() <= dateEnd.getTime()) {
-                                            db.collection("rentsEnd")
-                                                    .whereEqualTo("userId", MyApplication.getUser_id())
-                                                    .get()
-                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                            if (task.isSuccessful()) {
-                                                                if(task.getResult().size()>0){
-                                                                    db.collection("rentsEnd")
-                                                                            .whereEqualTo("userId", MyApplication.getUser_id())
-                                                                            .get()
-                                                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                                                @Override
-                                                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                                                    if (task.isSuccessful()) {
-                                                                                        for (QueryDocumentSnapshot document : task.getResult()) {
-                                                                                            String lastId = document.getId();
+
+        DialogConfirm dialogConfirm = new DialogConfirm(getContext(), "delete", "ต้องการเช็คเอาท์ห้องนี้?", new DialogConfirm.OnClickDialog() {
+            @Override
+            public void OnConfirm() {
+                db.collection("rents")
+                        .whereEqualTo("userId", MyApplication.getUser_id())
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        String keyMain = document.getId();
+                                        Map<String, Object> friendsMap = (Map<String, Object>) document.getData().get("listRents");
+                                        for (Map.Entry<String, Object> entry : friendsMap.entrySet()) {
+                                            String key = entry.getKey();
+                                            Map<String, Object> value = (Map<String, Object>) entry.getValue();
+                                            if (roomModel.getRoomId().equals(value.get("roomId").toString())) {
+                                                Timestamp timeStart = (Timestamp) value.get("dateStart");
+                                                Timestamp timeEnd = (Timestamp) value.get("dateEnd");
+                                                Calendar curDate = Calendar.getInstance();
+                                                Date dateCur = curDate.getTime();
+                                                Date dateStart = timeStart.toDate();
+                                                Date dateEnd = timeEnd.toDate();
+                                                if (dateCur.getTime() >= dateStart.getTime() && dateCur.getTime() <= dateEnd.getTime()) {
+                                                    db.collection("rentsEnd")
+                                                            .whereEqualTo("userId", MyApplication.getUser_id())
+                                                            .get()
+                                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                    if (task.isSuccessful()) {
+                                                                        if (task.getResult().size() > 0) {
+                                                                            db.collection("rentsEnd")
+                                                                                    .whereEqualTo("userId", MyApplication.getUser_id())
+                                                                                    .get()
+                                                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                        @Override
+                                                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                            if (task.isSuccessful()) {
+                                                                                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                                    String lastId = document.getId();
+                                                                                                    String rentNewId = UUID.randomUUID().toString();
+                                                                                                    final HashMap<String, Object> newRent = new HashMap<>();
+                                                                                                    newRent.put("rentName", value.get("rentName").toString());
+                                                                                                    newRent.put("rentPerson", Integer.valueOf(value.get("rentPerson").toString()));
+                                                                                                    newRent.put("dateStart", value.get("dateStart"));
+                                                                                                    newRent.put("dateEnd", value.get("dateEnd"));
+                                                                                                    newRent.put("rentDay", value.get("rentDay"));
+                                                                                                    newRent.put("roomId", value.get("roomId").toString());
+                                                                                                    newRent.put("status", value.get("status").toString());
+                                                                                                    newRent.put("dateCreate", value.get("dateCreate"));
+                                                                                                    newRent.put("dateCheckOut", FieldValue.serverTimestamp());
+                                                                                                    newRent.put("roomPriceDay", Integer.valueOf(value.get("roomPriceDay").toString()));
+                                                                                                    newRent.put("totalRentRoom", Integer.valueOf(value.get("totalRentRoom").toString()));
+                                                                                                    db.collection("rentsEnd").document(lastId).update("listRents." + rentNewId, newRent);
+                                                                                                    db.collection("rentsEnd").document(lastId).update("listRents." + rentNewId + ".listPay", value.get("listPay"));
+                                                                                                    db.collection("rentsEnd").document(lastId).update("listRents." + rentNewId + ".listService", value.get("listService"));
+                                                                                                    Map<String, Object> updateDEl = new HashMap<>();
+                                                                                                    updateDEl.put("listRents." + key, FieldValue.delete());
+                                                                                                    db.collection("rents").document(keyMain).update(updateDEl);
+                                                                                                    getDataRooms(CATE_KEY_CURRENT);
+                                                                                                }
+                                                                                            } else {
+                                                                                                Log.d("CHKDB", "Error getting documents: ", task.getException());
+                                                                                            }
+                                                                                        }
+                                                                                    });
+                                                                        } else {
+                                                                            RentsEnd rentsEnd = new RentsEnd();
+                                                                            rentsEnd.setUserId(MyApplication.getUser_id());
+                                                                            db.collection("rentsEnd")
+                                                                                    .add(rentsEnd)
+                                                                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                                                        @Override
+                                                                                        public void onSuccess(DocumentReference documentReference) {
+                                                                                            String lastId = documentReference.getId();
                                                                                             String rentNewId = UUID.randomUUID().toString();
                                                                                             final HashMap<String, Object> newRent = new HashMap<>();
                                                                                             newRent.put("rentName", value.get("rentName").toString());
@@ -212,64 +348,39 @@ public class HomeFragment extends Fragment {
                                                                                             newRent.put("totalRentRoom", Integer.valueOf(value.get("totalRentRoom").toString()));
                                                                                             db.collection("rentsEnd").document(lastId).update("listRents." + rentNewId, newRent);
                                                                                             db.collection("rentsEnd").document(lastId).update("listRents." + rentNewId + ".listPay", value.get("listPay"));
-                                                                                            Map<String,Object> updateDEl = new HashMap<>();
-                                                                                            updateDEl.put("listRents."+key, FieldValue.delete());
+                                                                                            db.collection("rentsEnd").document(lastId).update("listRents." + rentNewId + ".listService", value.get("listService"));
+                                                                                            Map<String, Object> updateDEl = new HashMap<>();
+                                                                                            updateDEl.put("listRents." + key, FieldValue.delete());
                                                                                             db.collection("rents").document(keyMain).update(updateDEl);
                                                                                             getDataRooms(CATE_KEY_CURRENT);
                                                                                         }
-                                                                                    } else {
-                                                                                        Log.d("CHKDB", "Error getting documents: ", task.getException());
-                                                                                    }
-                                                                                }
-                                                                            });
-                                                                }else{
-                                                                    RentsEnd rentsEnd = new RentsEnd();
-                                                                    rentsEnd.setUserId(MyApplication.getUser_id());
-                                                                    db.collection("rentsEnd")
-                                                                            .add(rentsEnd)
-                                                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                                                                @Override
-                                                                                public void onSuccess(DocumentReference documentReference) {
-                                                                                    String lastId = documentReference.getId();
-                                                                                    String rentNewId = UUID.randomUUID().toString();
-                                                                                    final HashMap<String, Object> newRent = new HashMap<>();
-                                                                                    newRent.put("rentName", value.get("rentName").toString());
-                                                                                    newRent.put("rentPerson", Integer.valueOf(value.get("rentPerson").toString()));
-                                                                                    newRent.put("dateStart", value.get("dateStart"));
-                                                                                    newRent.put("dateEnd", value.get("dateEnd"));
-                                                                                    newRent.put("rentDay", value.get("rentDay"));
-                                                                                    newRent.put("roomId", value.get("roomId").toString());
-                                                                                    newRent.put("status", value.get("status").toString());
-                                                                                    newRent.put("dateCreate", value.get("dateCreate"));
-                                                                                    newRent.put("dateCheckOut", FieldValue.serverTimestamp());
-                                                                                    newRent.put("roomPriceDay", Integer.valueOf(value.get("roomPriceDay").toString()));
-                                                                                    newRent.put("totalRentRoom", Integer.valueOf(value.get("totalRentRoom").toString()));
-                                                                                    db.collection("rentsEnd").document(lastId).update("listRents." + rentNewId, newRent);
-                                                                                    db.collection("rentsEnd").document(lastId).update("listRents." + rentNewId + ".listPay", value.get("listPay"));
-                                                                                    Map<String,Object> updateDEl = new HashMap<>();
-                                                                                    updateDEl.put("listRents."+key, FieldValue.delete());
-                                                                                    db.collection("rents").document(keyMain).update(updateDEl);
-                                                                                    getDataRooms(CATE_KEY_CURRENT);
-                                                                                }
-                                                                            })
-                                                                            .addOnFailureListener(new OnFailureListener() {
-                                                                                @Override
-                                                                                public void onFailure(@NonNull Exception e) {
-                                                                                    Log.w("CHKDB", "Error adding document", e);
-                                                                                }
-                                                                            });
+                                                                                    })
+                                                                                    .addOnFailureListener(new OnFailureListener() {
+                                                                                        @Override
+                                                                                        public void onFailure(@NonNull Exception e) {
+                                                                                            Log.w("CHKDB", "Error adding document", e);
+                                                                                        }
+                                                                                    });
+                                                                        }
+                                                                    }
                                                                 }
-                                                            }
-                                                        }
-                                                    });
+                                                            });
 
+                                                }
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
-                    }
-                });
+                        });
+            }
+
+            @Override
+            public void OnCancel() {
+                Log.d("CHKCONFIRM", "no");
+            }
+        }).openDialog();
+
     }
 
     public void getDataCateRoom() {
@@ -336,7 +447,8 @@ public class HomeFragment extends Fragment {
     }
 
     private void openDialogPrint(String rentIdGet) {
-
+        DialogPrint dialogPrint = new DialogPrint(getContext(), rentIdGet);
+        dialogPrint.openDialog();
     }
 
     @Override

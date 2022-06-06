@@ -103,7 +103,7 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.DailyViewHol
                                                 viewHolder.contRoom.setOnClickListener(new View.OnClickListener() {
                                                     @Override
                                                     public void onClick(View view) {
-                                                        dialogRent(roomModel,"busy");
+                                                        dialogRent(roomModel,"busy",key);
                                                     }
                                                 });
                                             }
@@ -113,7 +113,7 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.DailyViewHol
                                         viewHolder.contRoom.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
-                                                dialogRent(roomModel,"free");
+                                                dialogRent(roomModel,"free","");
                                             }
                                         });
                                     }
@@ -121,7 +121,7 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.DailyViewHol
                                     viewHolder.contRoom.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
-                                            dialogRent(roomModel,"free");
+                                            dialogRent(roomModel,"free","");
                                         }
                                     });
                                 }
@@ -142,13 +142,13 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.DailyViewHol
             @Override
             public void onClick(View view) {
                 if (roomModel.getStatusRoom().equals("free")) {
-                    dialogRent(roomModel,"free");
+                    dialogRent(roomModel,"free","");
                 }
             }
         });
     }
 
-    public void dialogRent(RoomModel roomModel,String status) {
+    public void dialogRent(RoomModel roomModel,String status,String rentId) {
         final Dialog dialog = new Dialog(mContext);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
@@ -160,7 +160,7 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.DailyViewHol
         int width = display.getWidth();
         int height = display.getHeight();
         Log.v("width", width + "");
-        dialog.getWindow().setLayout((6 * width) / 9, (4 * height) / 9);
+        dialog.getWindow().setLayout((6 * width) / 9, (6 * height) / 9);
         TextView cancle = dialog.findViewById(R.id.cancle);
         cancle.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,9 +173,15 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.DailyViewHol
         LinearLayout btnStatusRoom = dialog.findViewById(R.id.btnStatusRoom);
         LinearLayout btnCheckOut = dialog.findViewById(R.id.btnCheckOut);
         LinearLayout btnViewRent = dialog.findViewById(R.id.btnViewRent);
+        LinearLayout btnRentAfter = dialog.findViewById(R.id.btnRentAfter);
+        LinearLayout btnCancel = dialog.findViewById(R.id.btnCancel);
+        LinearLayout editRoom = dialog.findViewById(R.id.editRoom);
         TextView tvNameRoom = dialog.findViewById(R.id.tvNameRoom);
+        LinearLayout conManage = dialog.findViewById(R.id.conManage);
+        LinearLayout delRoom = dialog.findViewById(R.id.delRoom);
         tvNameRoom.setText("ห้อง " + roomModel.getRoomName());
         if (status.equals("free")) {
+            conManage.setVisibility(View.VISIBLE);
             btnRent.setVisibility(View.VISIBLE);
             btnStatusRoom.setVisibility(View.VISIBLE);
             btnRent.setOnClickListener(new View.OnClickListener() {
@@ -185,10 +191,48 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.DailyViewHol
                     dialog.dismiss();
                 }
             });
+            editRoom.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mOnClickChoose.OnClickChoose(0, "editRoom", roomModel);
+                    dialog.dismiss();
+                }
+            });
+            delRoom.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mOnClickChoose.OnClickChoose(0, "delRoom", roomModel);
+                    dialog.dismiss();
+                }
+            });
         }else if(status.equals("busy")){
+            btnRentAfter.setVisibility(View.VISIBLE);
             btnCheckOut.setVisibility(View.VISIBLE);
             btnStatusRoom.setVisibility(View.VISIBLE);
             btnViewRent.setVisibility(View.VISIBLE);
+            btnCancel.setVisibility(View.VISIBLE);
+            btnRentAfter.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mOnClickChoose.OnClickChoose(0, "rent", roomModel);
+                    dialog.dismiss();
+                }
+            });
+            btnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    MyApplication.setRentIdViewCur(rentId);
+                    mOnClickChoose.OnClickChoose(0, "cancelRent", roomModel);
+                    dialog.dismiss();
+                }
+            });
+            btnViewRent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    MyApplication.setRentIdViewCur(rentId);
+                    mOnClickChoose.OnClickChoose(0, "viewRent", roomModel);
+                }
+            });
             btnCheckOut.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -197,6 +241,12 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.DailyViewHol
                 }
             });
         }
+        btnStatusRoom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mOnClickChoose.OnClickChoose(0, "viewStatusRoom", roomModel);
+            }
+        });
 
     }
 
