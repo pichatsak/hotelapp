@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.devpos.hotelapp.R;
 import com.devpos.hotelapp.databinding.FragmentGalleryBinding;
 import com.devpos.hotelapp.databinding.FragmentSalereportBinding;
 import com.devpos.hotelapp.ui.gallery.GalleryViewModel;
@@ -18,6 +19,7 @@ public class SaleReportFragment extends Fragment {
 
     private FragmentSalereportBinding binding;
 
+    TextView dateStart,dateEnd,getBtn;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         GalleryViewModel galleryViewModel =
@@ -25,6 +27,10 @@ public class SaleReportFragment extends Fragment {
 
         binding = FragmentSalereportBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        dateStart = root.findViewById(R.id.dateStart);
+        dateEnd = root.findViewById(R.id.dateEnd);
+        getBtn = root.findViewById(R.id.getBtn);
 
 
         return root;

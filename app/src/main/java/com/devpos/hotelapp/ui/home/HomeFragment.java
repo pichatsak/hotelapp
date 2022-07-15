@@ -117,28 +117,78 @@ public class HomeFragment extends Fragment {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             roomsArrayList = new ArrayList<>();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
+                            if(task.getResult().size()>0){
+                                for (QueryDocumentSnapshot document : task.getResult()) {
 
+                                    RoomModel roomModelAdd = new RoomModel();
+                                    roomModelAdd.setRoomId("");
+                                    roomModelAdd.setRoomName("");
+                                    roomModelAdd.setStatusRoom("");
+                                    roomModelAdd.setCateId(cateKey);
+                                    roomsArrayList.add(roomModelAdd);
+
+                                    Map<String, Object> friendsMap = (Map<String, Object>) document.getData().get("listRoom");
+                                    for (Map.Entry<String, Object> entry : friendsMap.entrySet()) {
+                                        String key = entry.getKey();
+                                        Map<String, Object> value = (Map<String, Object>) entry.getValue();
+                                        if (value.get("cateId").toString().equals(cateKey)) {
+                                            RoomModel roomModel = new RoomModel();
+                                            roomModel.setRoomId(value.get("roomId").toString());
+                                            roomModel.setRoomName(value.get("roomName").toString());
+                                            roomModel.setStatusRoom(value.get("statusRoom").toString());
+                                            roomModel.setCateId(value.get("cateId").toString());
+                                            roomsArrayList.add(roomModel);
+                                        }
+                                    }
+
+                                    viewRooms.setHasFixedSize(true);
+                                    RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 3);
+                                    viewRooms.setLayoutManager(mLayoutManager);
+
+                                    RoomsAdapter roomsAdapter = new RoomsAdapter(getContext(), roomsArrayList, new RoomsAdapter.OnClickChoose() {
+                                        @Override
+                                        public void OnClickChoose(int position, String statusClick, RoomModel roomModel) {
+                                            if (statusClick.equals("add")) {
+                                                Intent gotoaddroom = new Intent(getContext(), addmenuroomActivity.class);
+                                                gotoaddroom.putExtra("statusSave","add");
+                                                gotoaddroom.putExtra("cateKey", CATE_KEY_CURRENT);
+                                                startActivityForResult(gotoaddroom, LAUNCH_ADD_ROOM);
+                                            } else if (statusClick.equals("rent")) {
+                                                Intent gotosettingroom = new Intent(getContext(), SettingRoomActivity.class);
+                                                gotosettingroom.putExtra("roomKey", roomModel.getRoomId());
+                                                gotosettingroom.putExtra("statusSave", "new");
+                                                startActivityForResult(gotosettingroom, LAUNCH_RENT_NEW);
+                                            } else if (statusClick.equals("checkOut")) {
+                                                goCheckOut(roomModel);
+                                            } else if (statusClick.equals("viewRent")) {
+                                                Intent goToRentView = new Intent(getContext(), ViewRentActivity.class);
+                                                startActivityForResult(goToRentView, LAUNCH_ADD_ROOM);
+                                            } else if (statusClick.equals("cancelRent")) {
+                                                goCancel();
+                                            } else if (statusClick.equals("editRoom")) {
+                                                Intent goEditRoom = new Intent(getContext(), addmenuroomActivity.class);
+                                                goEditRoom.putExtra("statusSave","edit");
+                                                goEditRoom.putExtra("cateKey", CATE_KEY_CURRENT);
+                                                goEditRoom.putExtra("roomId", roomModel.getRoomId());
+                                                startActivityForResult(goEditRoom, LAUNCH_ADD_ROOM);
+                                            } else if (statusClick.equals("delRoom")) {
+                                                goDelRoom(roomModel.getRoomId());
+                                            } else if (statusClick.equals("viewStatusRoom")) {
+                                                Intent goViewStatusRoom = new Intent(getContext(), ViewStatusRoomActivity.class);
+                                                goViewStatusRoom.putExtra("roomId", roomModel.getRoomId());
+                                                startActivityForResult(goViewStatusRoom, LAUNCH_ADD_ROOM);
+                                            }
+                                        }
+                                    });
+                                    viewRooms.setAdapter(roomsAdapter);
+                                }
+                            }else{
                                 RoomModel roomModelAdd = new RoomModel();
                                 roomModelAdd.setRoomId("");
                                 roomModelAdd.setRoomName("");
                                 roomModelAdd.setStatusRoom("");
                                 roomModelAdd.setCateId(cateKey);
                                 roomsArrayList.add(roomModelAdd);
-
-                                Map<String, Object> friendsMap = (Map<String, Object>) document.getData().get("listRoom");
-                                for (Map.Entry<String, Object> entry : friendsMap.entrySet()) {
-                                    String key = entry.getKey();
-                                    Map<String, Object> value = (Map<String, Object>) entry.getValue();
-                                    if (value.get("cateId").toString().equals(cateKey)) {
-                                        RoomModel roomModel = new RoomModel();
-                                        roomModel.setRoomId(value.get("roomId").toString());
-                                        roomModel.setRoomName(value.get("roomName").toString());
-                                        roomModel.setStatusRoom(value.get("statusRoom").toString());
-                                        roomModel.setCateId(value.get("cateId").toString());
-                                        roomsArrayList.add(roomModel);
-                                    }
-                                }
 
                                 viewRooms.setHasFixedSize(true);
                                 RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 3);
@@ -181,6 +231,7 @@ public class HomeFragment extends Fragment {
                                 });
                                 viewRooms.setAdapter(roomsAdapter);
                             }
+
                         } else {
                             Log.d("CHKDB", "Error getting documents: ", task.getException());
                         }
@@ -384,6 +435,12 @@ public class HomeFragment extends Fragment {
     }
 
     public void getDataCateRoom() {
+        if(FIRST_OPEN){
+            Log.d("CHKOPEM","first open") ;
+        }else {
+            Log.d("CHKOPEM","first not : key : "+CATE_KEY_CURRENT) ;
+        }
+
         db.collection("cate_rooms")
                 .whereEqualTo("userId", MyApplication.getUser_id())
                 .get()
@@ -406,6 +463,13 @@ public class HomeFragment extends Fragment {
                                         FIRST_OPEN = false;
                                         CATE_KEY_CURRENT = key;
                                         getDataRooms(key);
+                                    }else{
+                                        Log.d("CHKBACK","get bol "+MyApplication.isIsBackFromFragment());
+                                        if(MyApplication.isIsBackFromFragment()){
+                                            getDataRooms(CATE_KEY_CURRENT);
+                                            Log.d("CHKBACK","is back fragment");
+                                            MyApplication.setIsBackFromFragment(false);
+                                        }
                                     }
                                 }
                                 viewCateRoom.setHasFixedSize(true);
@@ -443,6 +507,8 @@ public class HomeFragment extends Fragment {
             getDataRooms(CATE_KEY_CURRENT);
             String rentIdGet = data.getStringExtra("rentId");
             openDialogPrint(rentIdGet);
+        } else{
+            getDataRooms(CATE_KEY_CURRENT);
         }
     }
 

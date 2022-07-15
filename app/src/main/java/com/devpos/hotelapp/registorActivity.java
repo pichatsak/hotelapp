@@ -24,9 +24,12 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.Calendar;
 
 public class registorActivity extends AppCompatActivity {
 
@@ -123,7 +126,7 @@ public class registorActivity extends AppCompatActivity {
                                             // Sign in success, update UI with the signed-in user's information
                                             Log.d("JuiKee", "createUserWithEmail:success");
                                             FirebaseUser user = mAuth.getCurrentUser();
-
+                                            Calendar calendar = Calendar.getInstance();
                                             data_registor data = new data_registor();
                                             data.setName(getName);
                                             data.setListhotel(getListhotel);
@@ -132,6 +135,9 @@ public class registorActivity extends AppCompatActivity {
                                             data.setPassword_regis(getPassword_regis);
                                             data.setId(user.getUid());
                                             data.setStatus("wait");
+                                            data.setDateCreate(calendar.getTime());
+                                            data.setDateStartUse(calendar.getTime());
+                                            data.setDateEndUse(calendar.getTime());
                                             db.collection("users")
                                                     .add(data)
                                                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -144,6 +150,7 @@ public class registorActivity extends AppCompatActivity {
                                                             dialog.setContentView(R.layout.dialog_registor_success);
                                                             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
                                                             gologin = dialog.findViewById(R.id.gologin);
+                                                            mAuth.signOut();
                                                             dialog.show();
                                                             gologin.setOnClickListener(new View.OnClickListener() {
                                                                 @Override

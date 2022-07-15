@@ -1,5 +1,9 @@
 package com.devpos.hotelapp.data_registor;
 
+import com.google.firebase.firestore.FieldValue;
+
+import java.util.Date;
+
 public class data_registor {
     private String name;
     private String listhotel;
@@ -8,8 +12,35 @@ public class data_registor {
     private String password_regis;
     private String id;
     private String status;
+    private Date dateCreate;
+    private Date dateStartUse;
+    private Date dateEndUse;
 
     public data_registor() {
+    }
+
+    public Date getDateCreate() {
+        return dateCreate;
+    }
+
+    public void setDateCreate(Date dateCreate) {
+        this.dateCreate = dateCreate;
+    }
+
+    public Date getDateStartUse() {
+        return dateStartUse;
+    }
+
+    public void setDateStartUse(Date dateStartUse) {
+        this.dateStartUse = dateStartUse;
+    }
+
+    public Date getDateEndUse() {
+        return dateEndUse;
+    }
+
+    public void setDateEndUse(Date dateEndUse) {
+        this.dateEndUse = dateEndUse;
     }
 
     public String getStatus() {

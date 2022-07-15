@@ -2,6 +2,7 @@ package com.devpos.hotelapp.ui.slideshow;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.devpos.hotelapp.MainActivity;
+import com.devpos.hotelapp.MyApplication;
 import com.devpos.hotelapp.R;
 import com.devpos.hotelapp.ChangPasswordActivity;
 import com.devpos.hotelapp.databinding.FragmentSlideshowBinding;
@@ -41,6 +43,8 @@ public class SlideshowFragment extends Fragment {
         backhome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MyApplication.setIsBackFromFragment(true);
+                Log.d("CHKBACK","set bak : "+MyApplication.isIsBackFromFragment());
                 getActivity().onBackPressed();
             }
         });
@@ -66,11 +70,14 @@ public class SlideshowFragment extends Fragment {
             }
         });
 
-
-
-//        final TextView textView = binding.textSlideshow;
-//        slideshowViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
+    }
+
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 
     @Override

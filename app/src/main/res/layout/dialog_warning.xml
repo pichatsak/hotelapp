@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background1"
+        android:orientation="vertical"
+        android:paddingLeft="30dp"
+        android:paddingTop="20dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="20dp">
+        <LinearLayout
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_gravity="center"
+                android:src="@drawable/warning"
+                android:layout_width="50dp"
+                android:layout_height="50dp"/>
+        </LinearLayout>
+        <RelativeLayout
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="10dp"
+                android:text="ข้อความ"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+            <LinearLayout
+                android:id="@+id/conManage"
+                android:visibility="gone"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:padding="5dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp">
+                    <ImageView
+                        android:src="@drawable/edit2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:tint="@color/main6" />
+                </LinearLayout>
+                <LinearLayout
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:layout_marginLeft="5dp"
+                    android:padding="3dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp">
+                    <ImageView
+                        android:src="@drawable/delete"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:tint="@color/red" />
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/btnok"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:background="@drawable/login"
+                android:elevation="2dp"
+                android:gravity="center"
+                android:text="ตกลง"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
