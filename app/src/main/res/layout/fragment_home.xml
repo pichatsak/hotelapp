@@ -49,13 +49,18 @@
                     android:layout_weight="1.5"
                     android:padding="15dp">
 
-                    <EditText
+                    <TextView
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:layout_gravity="left"
+                        android:gravity="center|left"
+                        android:id="@+id/search_view"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@drawable/bar_find"
                         android:drawableEnd="@drawable/ic_baseline_search_24"
                         android:drawableTint="@color/main"
-                        android:hint="ค้นหาห้องที่ต้องการ"
+                        android:hint="ค้นหาห้องว่าง"
                         android:paddingLeft="20dp"
                         android:paddingRight="10dp"
                         android:textSize="16sp" />

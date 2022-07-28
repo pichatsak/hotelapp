@@ -5,6 +5,7 @@
     android:layout_marginRight="10dp"
     android:background="@drawable/list"
     android:clickable="true"
+    android:longClickable="true"
     android:foreground="?android:attr/selectableItemBackground"
     android:layout_height="wrap_content">
     <TextView

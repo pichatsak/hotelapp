@@ -3,7 +3,9 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_marginBottom="5dp"
-    android:layout_height="105dp">
+    android:layout_height="105dp"
+
+    >
     <LinearLayout
         android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
@@ -48,6 +50,7 @@
 
     </LinearLayout>
     <LinearLayout
+
         android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
         android:id="@+id/contAdd"

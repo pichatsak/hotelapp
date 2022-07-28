@@ -49,25 +49,46 @@
         <entry key="..\:/Users/Jui/AndroidStudioProjects/hotelapp/app/src/main/res/layout/fragment_home.xml" value="0.32447916666666665" />
         <entry key="..\:/Users/Jui/AndroidStudioProjects/hotelapp/app/src/main/res/layout/fragment_slideshow.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Jui/AndroidStudioProjects/hotelapp/app/src/main/res/layout/nav_header_main.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/drawable/add.xml" value="0.259" />
+        <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/drawable/back.xml" value="0.259" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/drawable/bar_find.xml" value="0.1905" />
+        <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/drawable/blog_grey.xml" value="0.259" />
+        <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/drawable/blog_ta.xml" value="0.259" />
+        <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/drawable/bolg_whiet.xml" value="0.1935" />
+        <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/drawable/btnsoft.xml" value="0.259" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/drawable/ciecle_red.xml" value="0.1905" />
+        <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/drawable/farm1.xml" value="0.259" />
+        <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/drawable/fram.xml" value="0.259" />
+        <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/drawable/frambin.xml" value="0.1935" />
+        <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/drawable/framroom.xml" value="0.259" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/drawable/ic_alarm_alert_clock_time_svgrepo_com.xml" value="0.1905" />
+        <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/drawable/ic_edit_svgrepo_com.xml" value="0.259" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/drawable/ic_password_svgrepo_com.xml" value="0.1905" />
+        <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/drawable/inputs.xml" value="0.259" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/drawable/list.xml" value="0.1905" />
+        <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/drawable/list1.xml" value="0.259" />
+        <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/drawable/list2.xml" value="0.259" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/drawable/listroom.xml" value="0.1905" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/drawable/login.xml" value="0.1905" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/activity_addmenuroom.xml" value="0.3625" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/activity_addpageroom.xml" value="0.3101851851851852" />
+        <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/activity_change_password.xml" value="0.3625" />
+        <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/activity_edit_cate.xml" value="0.3625" />
+        <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/activity_find_room.xml" value="0.3625" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/activity_login.xml" value="0.3625" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/activity_main.xml" value="0.30833333333333335" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/activity_registor.xml" value="0.3101851851851852" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/activity_seeting_profile.xml" value="0.3625" />
+        <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/activity_setting_bill.xml" value="0.3625" />
+        <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/activity_setting_printer.xml" value="0.3625" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/activity_setting_room.xml" value="0.3625" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/activity_view_rent.xml" value="0.3625" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/activity_view_status_room.xml" value="0.3625" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/app_bar_main.xml" value="0.3625" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/calendar_day_layout.xml" value="0.3625" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/content_main.xml" value="0.3625" />
+        <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/dialog_add_txt_bill.xml" value="0.3625" />
+        <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/dialog_cate.xml" value="0.3625" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/dialog_check_bin.xml" value="0.3625" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/dialog_delete.xml" value="0.3625" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/dialog_error.xml" value="0.3625" />
@@ -77,6 +98,7 @@
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/dialog_registor_success.xml" value="0.3625" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/dialog_success.xml" value="0.3625" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/dialog_warning.xml" value="0.3625" />
+        <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/dropdown_item.xml" value="0.18541666666666667" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/fragment_gallery.xml" value="0.3625" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/fragment_home.xml" value="0.3101851851851852" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/fragment_salereport.xml" value="0.3625" />
@@ -85,10 +107,13 @@
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/row_cate_room.xml" value="2.4857142857142858" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/row_pay.xml" value="0.3625" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/row_pay_view.xml" value="0.3625" />
+        <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/row_room_search.xml" value="0.3625" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/row_rooms.xml" value="0.3625" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/row_service.xml" value="0.3625" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/row_service_view.xml" value="0.3625" />
+        <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/layout/row_txt_bill.xml" value="0.3625" />
         <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/menu/activity_main_drawer.xml" value="0.3625" />
+        <entry key="..\:/Users/nitip/AndroidStudioProjects/hotelapp/app/src/main/res/menu/main.xml" value="0.3625" />
       </map>
     </option>
   </component>

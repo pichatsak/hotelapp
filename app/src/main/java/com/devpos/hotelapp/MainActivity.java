@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.devpos.hotelapp.RealmDB.PrintSetRm;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
@@ -31,6 +32,11 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.UUID;
+
+import io.realm.Realm;
+import io.realm.RealmResults;
+
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -40,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout pickRoom;
     private LinearLayout SeetingProfile;
     private TextView nameUser,nameHotel;
-
+    Realm realm = Realm.getDefaultInstance();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +91,16 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        LinearLayout editProfiles = headerViews.findViewById(R.id.editProfiles);
+        editProfiles.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent settingprofile = new Intent(MainActivity.this, SeetingProfileActivity.class);
+                startActivity(settingprofile);
+                drawer.close();
+            }
+        });
+
 
 
 
@@ -126,6 +142,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         getDataUser();
+        checkPrintSet();
+    }
+
+    public void checkPrintSet(){
+        RealmResults<PrintSetRm> printSetRms = realm.where(PrintSetRm.class).findAll();
+        if(printSetRms.isEmpty()){
+            realm.beginTransaction();
+            PrintSetRm printSetRm = realm.createObject(PrintSetRm.class, UUID.randomUUID().toString());
+            printSetRm.setSizePaper(58f);
+            printSetRm.setPerLine(48);
+            printSetRm.setDpiPrinter(203);
+            realm.commitTransaction();
+        }
     }
 
     public void getDataUser(){

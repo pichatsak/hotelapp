@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 
 public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.DailyViewHolder> {
@@ -95,8 +96,16 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.DailyViewHol
                                             Date dateEnd = timeEnd.toDate();
                                             if(dateCur.getTime()>=dateStart.getTime()&&dateCur.getTime()<=dateEnd.getTime()){
                                                 exits = true;
-                                                Log.d("CHKRENTS","room : "+roomModel.getRoomName()+" is busy");
-                                                viewHolder.contRoom.setBackgroundResource(R.drawable.list);
+                                                long millionSeconds = dateEnd.getTime() - dateCur.getTime();
+                                                long hour = TimeUnit.MILLISECONDS.toHours(millionSeconds);
+                                                int hourR = Math.round(hour);
+
+                                                if(hourR<=3){
+                                                    viewHolder.contRoom.setBackgroundResource(R.drawable.list2);
+                                                }else{
+
+                                                    viewHolder.contRoom.setBackgroundResource(R.drawable.list);
+                                                }
                                                 viewHolder.tvRoomName.setTextColor(mContext.getResources().getColor(R.color.white));
                                                 viewHolder.contFree.setVisibility(View.GONE);
                                                 viewHolder.contBusy.setVisibility(View.VISIBLE);
@@ -106,6 +115,7 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.DailyViewHol
                                                         dialogRent(roomModel,"busy",key);
                                                     }
                                                 });
+
                                             }
                                         }
                                     }
@@ -206,6 +216,9 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.DailyViewHol
                 }
             });
         }else if(status.equals("busy")){
+
+
+
             btnRentAfter.setVisibility(View.VISIBLE);
             btnCheckOut.setVisibility(View.VISIBLE);
             btnStatusRoom.setVisibility(View.VISIBLE);

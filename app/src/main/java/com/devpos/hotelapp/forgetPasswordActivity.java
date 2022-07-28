@@ -78,7 +78,6 @@ public class forgetPasswordActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             Log.d("JuiKee", "Email sent.");
-
                         }
                     }
                 });

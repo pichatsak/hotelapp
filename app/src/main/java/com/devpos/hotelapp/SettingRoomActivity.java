@@ -31,9 +31,12 @@ import android.widget.Toast;
 import com.devpos.hotelapp.FirebaseModels.Rents;
 import com.devpos.hotelapp.FirebaseModels.Rooms;
 import com.devpos.hotelapp.adaptors.PaysAdapter;
+import com.devpos.hotelapp.adaptors.RoomSearchAdapter;
 import com.devpos.hotelapp.adaptors.ServiceAdapter;
+import com.devpos.hotelapp.models.DataCheck;
 import com.devpos.hotelapp.models.PayModel;
 import com.devpos.hotelapp.models.RoomModel;
+import com.devpos.hotelapp.models.RoomModelSearch;
 import com.devpos.hotelapp.models.ServiceModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -58,6 +61,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class SettingRoomActivity extends AppCompatActivity {
 
@@ -98,6 +102,12 @@ public class SettingRoomActivity extends AppCompatActivity {
     private TextInputEditText rentName, rentPerson;
     private String statusSave = "";
     private String rentId = "";
+
+    Map<String, Object> cateMap = new HashMap<>();
+    Map<String, Object> rentMap = new HashMap<>();
+    Map<String, Object> roomMap = new HashMap<>();
+
+    Map<String, Object> valueRoom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,9 +151,11 @@ public class SettingRoomActivity extends AppCompatActivity {
             statusSave = bundle.getString("statusSave");
             if (statusSave.equals("new")) {
                 saveRent.setText("ยืนยันการจอง");
-            } else {
+            } else if (statusSave.equals("edit")) {
                 rentId = bundle.getString("rentId");
                 saveRent.setText("บันทึกข้อมูล");
+            } else {
+                saveRent.setText("ยืนยันการจอง");
             }
         }
         setClickBtnAll();
@@ -153,9 +165,28 @@ public class SettingRoomActivity extends AppCompatActivity {
         getListMorePrice();
         getListPay();
         setClickSave();
+
         if (statusSave.equals("edit")) {
             getDataEdit();
+        } else if (statusSave.equals("search")) {
+
+            date = MyApplication.getDateStartChoose();
+            dateEnd = MyApplication.getDateEndChoose();
+            setDataShow();
+        } else {
+            getCateData();
         }
+    }
+
+    private void setDataShow() {
+        chooseDateStart.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm").format(date.getTime()));
+        dateEndChoose.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm").format(dateEnd.getTime()));
+
+        long millionSeconds = dateEnd.getTimeInMillis() - date.getTimeInMillis();
+        long days = TimeUnit.MILLISECONDS.toDays(millionSeconds);
+        int daysRounded = Math.round(days);
+        edNumDay.setText("" + daysRounded);
+        numDayRent = daysRounded;
     }
 
     private void getDataEdit() {
@@ -232,14 +263,106 @@ public class SettingRoomActivity extends AppCompatActivity {
                 } else if (totalPay < totalRentFinal) {
                     Toast.makeText(SettingRoomActivity.this, "ยอดรวมการชำระเงินไม่เพียงพอ", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (statusSave.equals("new")) {
-                        setSaveRent();
+                    if (statusSave.equals("new") || statusSave.equals("search")) {
+                        if (isChkDate()) {
+                            setSaveRent();
+                        } else {
+                            Toast.makeText(SettingRoomActivity.this, "ห้องนี้ไม่ว่างในช่วงเวลานี้", Toast.LENGTH_SHORT).show();
+                        }
                     } else {
-                        setEditRent();
+                        if (isChkDate()) {
+                            setEditRent();
+                        } else {
+                            Toast.makeText(SettingRoomActivity.this, "ห้องนี้ไม่ว่างในช่วงเวลานี้", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             }
         });
+    }
+
+
+    private void getCateData() {
+
+        db.collection("cate_rooms")
+                .whereEqualTo("userId", MyApplication.getUser_id())
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            cateMap = (Map<String, Object>) document.getData().get("listCate");
+                        }
+                    }
+                });
+
+        db.collection("rents")
+                .whereEqualTo("userId", MyApplication.getUser_id())
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            rentMap = (Map<String, Object>) document.getData().get("listRents");
+                        }
+                    }
+                });
+
+    }
+
+    public boolean isChkDate() {
+        boolean resData = false;
+        int numRoomFree = 0;
+
+        int pos = 1;
+        int max = rentMap.size();
+        int numIn = 0;
+        int chkRe = 0;
+        int numBusy = 0;
+
+
+        for (Map.Entry<String, Object> entryRent : rentMap.entrySet()) {
+            Map<String, Object> valueRent = (Map<String, Object>) entryRent.getValue();
+
+            if (valueRent.get("roomId").toString().equals(valueRoom.get("roomId").toString())) {
+                chkRe++;
+                Timestamp timeStampGet = (Timestamp) valueRent.get("dateStart");
+                Date dateStartRentGet = timeStampGet.toDate();
+
+                Timestamp timeStampEnd = (Timestamp) valueRent.get("dateEnd");
+                Date dateEndRentGet = timeStampEnd.toDate();
+
+                if (date.getTimeInMillis() >= dateStartRentGet.getTime() && dateEnd.getTimeInMillis() <= dateEndRentGet.getTime()) {
+                    Log.d("CHKBUSY", "in bs 1 " + valueRoom.get("roomName").toString());
+                    numBusy++;
+                } else if ((date.getTimeInMillis() >= dateStartRentGet.getTime() && date.getTimeInMillis() <= dateEndRentGet.getTime()) && dateEnd.getTimeInMillis() >= dateEndRentGet.getTime()) {
+                    Log.d("CHKBUSY", "in bs 2 " + valueRoom.get("roomName").toString());
+                    numBusy++;
+                } else if (date.getTimeInMillis() < dateStartRentGet.getTime() && (dateEnd.getTimeInMillis() >= dateStartRentGet.getTime() && dateEnd.getTimeInMillis() <= dateEndRentGet.getTime())) {
+                    Log.d("CHKBUSY", "in bs 3 " + valueRoom.get("roomName").toString());
+                    numBusy++;
+                } else {
+                    Log.d("CHKBUSY", "in free " + valueRoom.get("roomName").toString());
+                }
+
+            }
+            pos++;
+        }
+        Log.d("CHKBUSY", valueRoom.get("roomName").toString() + " numIn:" + numIn + " , re:" + chkRe);
+        if (chkRe == 0) {
+            numRoomFree++;
+        } else if (numBusy == 0) {
+            numRoomFree++;
+        }
+
+
+        if (numRoomFree > 0) {
+            resData = true;
+
+            Log.d("CHKBUSY", "true");
+        } else {
+            resData = false;
+            Log.d("CHKBUSY", "false");
+        }
+        return resData;
     }
 
     private void setEditRent() {
@@ -253,16 +376,16 @@ public class SettingRoomActivity extends AppCompatActivity {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 String docId = document.getId();
                                 db.collection("rents").document(docId).update(
-                                        "listRents."+rentId+".rentName",rentName.getText().toString(),
-                                        "listRents."+rentId+".rentPerson",rentPerson.getText().toString(),
-                                        "listRents."+rentId+".dateStart",date.getTime(),
-                                        "listRents."+rentId+".dateEnd",dateEnd.getTime(),
-                                        "listRents."+rentId+".rentDay",numDayRent,
-                                        "listRents."+rentId+".roomPriceDay",Integer.valueOf(roomPriceDay.getText().toString()),
-                                        "listRents."+rentId+".totalRentRoom",Integer.valueOf(totalRentRoom.getText().toString()),
-                                        "listRents."+rentId+".listPay",payModelArrayList,
-                                        "listRents."+rentId+".listService",serviceModelArrayList
-                                        );
+                                        "listRents." + rentId + ".rentName", rentName.getText().toString(),
+                                        "listRents." + rentId + ".rentPerson", rentPerson.getText().toString(),
+                                        "listRents." + rentId + ".dateStart", date.getTime(),
+                                        "listRents." + rentId + ".dateEnd", dateEnd.getTime(),
+                                        "listRents." + rentId + ".rentDay", numDayRent,
+                                        "listRents." + rentId + ".roomPriceDay", Integer.valueOf(roomPriceDay.getText().toString()),
+                                        "listRents." + rentId + ".totalRentRoom", Integer.valueOf(totalRentRoom.getText().toString()),
+                                        "listRents." + rentId + ".listPay", payModelArrayList,
+                                        "listRents." + rentId + ".listService", serviceModelArrayList
+                                );
                                 Intent returnIntent = new Intent();
                                 setResult(Activity.RESULT_OK, returnIntent);
                                 finish();
@@ -513,7 +636,7 @@ public class SettingRoomActivity extends AppCompatActivity {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Map<String, Object> friendsMap = (Map<String, Object>) document.getData().get("listRoom");
                                 Map<String, Object> value = (Map<String, Object>) friendsMap.get(KEY_ROOM);
-
+                                valueRoom = value;
                                 roomPriceDay.setText(value.get("roomPrice").toString());
                                 priceRoom = Integer.valueOf(value.get("roomPrice").toString());
                                 if (statusSave.equals("edit")) {

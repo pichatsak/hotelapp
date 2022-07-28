@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -61,9 +62,19 @@ public class CateRoomAdapter extends RecyclerView.Adapter<CateRoomAdapter.DailyV
             public void onClick(View view) {
                 posCur = i;
                 notifyDataSetChanged();
-                mOnClickChoose.OnClickChoose(i,newsModel.getCateKey());
+                mOnClickChoose.OnClickChoose(i,newsModel.getCateKey(),"view");
             }
         });
+        viewHolder.contMain.setOnLongClickListener(new View.OnLongClickListener() {
+
+            @Override
+            public boolean onLongClick(View v) {
+                mOnClickChoose.OnClickChoose(i,newsModel.getCateKey(),"edit");
+                return true;
+            }
+
+        });
+
     }
 
 
@@ -96,7 +107,7 @@ public class CateRoomAdapter extends RecyclerView.Adapter<CateRoomAdapter.DailyV
 
 
     public interface OnClickChoose{
-        void OnClickChoose(int position, String keyCate);
+        void OnClickChoose(int position, String keyCate,String status);
     }
 
 }

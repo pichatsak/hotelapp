@@ -59,6 +59,28 @@
             android:text="โรงแรม"
             android:textSize="12sp" />
 
+        <LinearLayout
+            android:id="@+id/editProfiles"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:background="@drawable/bolg_whiet"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textColor="@color/main1"
+                    android:text="แก้ไขข้อมูล"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+            </LinearLayout>
+        </LinearLayout>
 
 
 

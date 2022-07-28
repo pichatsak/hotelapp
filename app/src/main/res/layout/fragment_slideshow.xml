@@ -109,6 +109,10 @@
                             android:background="@drawable/fram_setting">
 
                             <LinearLayout
+
+                                android:clickable="true"
+                                android:foreground="?android:attr/selectableItemBackground"
+                                android:id="@+id/setPrinter"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:paddingLeft="10dp"
@@ -157,6 +161,10 @@
                             </LinearLayout>
 
                             <LinearLayout
+                                android:id="@+id/setBill"
+                                android:clickable="true"
+                                android:foreground="?android:attr/selectableItemBackground"
+
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:paddingLeft="10dp"
@@ -188,6 +196,7 @@
                                     android:textSize="16sp" />
                             </LinearLayout>
                             <LinearLayout
+                                android:visibility="gone"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_marginTop="0dp"
@@ -205,6 +214,7 @@
                             </LinearLayout>
 
                             <LinearLayout
+                                android:visibility="gone"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:paddingLeft="10dp"

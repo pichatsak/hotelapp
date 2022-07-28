@@ -18,6 +18,8 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -34,7 +36,8 @@ public class loginActivity extends AppCompatActivity {
     private TextView login;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-
+    private String lineId="";
+    private String phoneWeb = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +92,16 @@ public class loginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        DocumentReference docRef = db.collection("cities").document("SF");
+        docRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    lineId = document.getData().get("idLine").toString();
+                    phoneWeb = document.getData().get("phone").toString();
+                }
+            }
+        });
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
             db.collection("users")
@@ -99,10 +112,28 @@ public class loginActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
-                                    MyApplication.setUser_id(document.getId());
-                                    Intent intent = new Intent(loginActivity.this, MainActivity.class);
-                                    startActivity(intent);
-                                    finish();
+                                    String getStatus = document.getData().get("status").toString();
+                                    if (getStatus.equals("yes")) {
+                                        Timestamp timeStart = (Timestamp) document.getData().get("dateStartUse");
+                                        Timestamp timeEnd = (Timestamp) document.getData().get("dateEndUse");
+                                        Calendar curDate = Calendar.getInstance();
+                                        Date dateStart = timeStart.toDate();
+                                        Date dateEnd = timeEnd.toDate();
+                                        Date dateCur = curDate.getTime();
+
+                                        if(dateCur.getTime()>=dateStart.getTime()&&dateCur.getTime()<=dateEnd.getTime()){
+                                            MyApplication.setUser_id(document.getId());
+                                            Intent intent = new Intent(loginActivity.this, MainActivity.class);
+                                            startActivity(intent);
+                                            finish();
+                                        }else if(dateCur.getTime()>dateEnd.getTime()){
+                                            String showTxt = "ผู้ใช้นี้หมดอายุการใช้งานแล้ว \n กรุณาติดต่อเจ้าหน้าที่ \n Line : "+lineId+" \n เบอร์โทร : "+lineId;
+                                            new DialogAlert(loginActivity.this,showTxt,"warning").openDialog();
+                                        }
+                                    } else {
+                                        String showTxt = "บัญชีนี้ยังไม่ได้รับการอนุมัติ \n กรุณาติดต่อเจ้าหน้าที่ \n Line : "+lineId+" \n เบอร์โทร : "+lineId;
+                                        new DialogAlert(loginActivity.this,showTxt,"error").openDialog();
+                                    }
                                 }
                             }
                         }
@@ -160,12 +191,12 @@ public class loginActivity extends AppCompatActivity {
                                                         }
                                                     });
                                         }else if(dateCur.getTime()>dateEnd.getTime()){
-                                            String showTxt = "ผู้ใช้นี้หมดอายุการใช้งานแล้ว \n กรุณาติดต่อเจ้าหน้าที่ \n Line : @hotel \n เบอร์โทร : 085-457-5811";
+                                            String showTxt = "ผู้ใช้นี้หมดอายุการใช้งานแล้ว \n กรุณาติดต่อเจ้าหน้าที่ \n Line : "+lineId+" \n เบอร์โทร : "+phoneWeb;
                                             new DialogAlert(loginActivity.this,showTxt,"warning").openDialog();
                                         }
 
                                     } else {
-                                        String showTxt = "บัญชีนี้ยังไม่ได้รับการอนุมัติ \n กรุณาติดต่อเจ้าหน้าที่ \n Line : @hotel \n เบอร์โทร : 085-457-5811";
+                                        String showTxt = "บัญชีนี้ยังไม่ได้รับการอนุมัติ \n กรุณาติดต่อเจ้าหน้าที่ \n Line : "+lineId+" \n เบอร์โทร : "+phoneWeb;
                                         new DialogAlert(loginActivity.this,showTxt,"error").openDialog();
                                     }
                                 }

@@ -4,6 +4,10 @@ import android.app.Application;
 
 import androidx.appcompat.app.AppCompatDelegate;
 
+import java.util.Calendar;
+
+import io.realm.Realm;
+
 
 public class MyApplication extends Application {
     private static String user_id;
@@ -11,9 +15,14 @@ public class MyApplication extends Application {
     private static String type;
     private static boolean isBackFromFragment=false;
     private static String urlStorage ="gs://engless2022.appspot.com";
+
+    private static Calendar dateStartChoose = null;
+    private static Calendar dateEndChoose = null;
+
     @Override
     public void onCreate() {
 
+        Realm.init(this);
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         super.onCreate();
     }
@@ -32,6 +41,22 @@ public class MyApplication extends Application {
 
     public static void setRentIdViewCur(String rentIdViewCur) {
         MyApplication.rentIdViewCur = rentIdViewCur;
+    }
+
+    public static Calendar getDateStartChoose() {
+        return dateStartChoose;
+    }
+
+    public static void setDateStartChoose(Calendar dateStartChoose) {
+        MyApplication.dateStartChoose = dateStartChoose;
+    }
+
+    public static Calendar getDateEndChoose() {
+        return dateEndChoose;
+    }
+
+    public static void setDateEndChoose(Calendar dateEndChoose) {
+        MyApplication.dateEndChoose = dateEndChoose;
     }
 
     public static boolean isIsBackFromFragment() {
